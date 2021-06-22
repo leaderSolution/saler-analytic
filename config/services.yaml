@@ -20,6 +20,10 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
             - '../src/Tests/'
-
+    
+        # explicitly configure the service
+    App\Controller\ProfileController:
+        tags: [controller.service_arguments]
+              
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
