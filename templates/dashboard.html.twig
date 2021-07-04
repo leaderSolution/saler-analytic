@@ -1,0 +1,59 @@
+{% extends "base.html.twig" %}
+{% block body %}
+{% set route = app.request.get('_route') %}
+<nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+  <div class="container">
+    <a class="navbar-brand" href="#">
+        <h4>Commercial Reporting</h4>
+    </a>
+  </div>
+</nav>
+<div class="container-fluid">
+    <div class="row flex-nowrap">
+        <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0  bg-light">
+            <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
+                
+                <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start">
+                    <li class="nav-item">
+                        <a href="{{ path('dashboard') }}" class="{{ route == 'dashboard' ? 'current' }} nav-link align-middle px-0">
+                            <i class="fs-4 bi-speedometer2"></i><span class="ms-1 d-none d-sm-inline">Dashboard</span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="{{ path('schedule') }}" class="{{ route == 'schedule' ? 'current' }} nav-link px-0 align-middle">
+                           <i class="bi bi-calendar-event"></i> <span class="ms-1 d-none d-sm-inline">Agenda</span></a>
+                    </li>
+                    
+                    <li>
+                        <a href="#" class="{{ route == 'dashbord' ? 'current' }} nav-link px-0 align-middle">
+                         <i class="bi bi-card-list"></i><span class="ms-1 d-none d-sm-inline">Visites</span> </a>
+                    </li>
+                </ul>
+                <hr>
+                <div class="dropdown pb-4">
+                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="https://github.com/mdo.png" alt="hugenerd" width="30" height="30" class="rounded-circle">
+                        <span class="d-none d-sm-inline mx-1">{{ app.user.username }}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+                        <li><a class="dropdown-item" href="#">New project...</a></li>
+                        <li><a class="dropdown-item" href="#">Settings</a></li>
+                        <li><a class="dropdown-item" href="{{ path('profile') }}">Profile</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="{{ path('app_logout') }}">Sign out</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      
+
+      {% block content %}{% endblock %}
+
+    </main>
+    </div>
+</div>
+{% endblock %}

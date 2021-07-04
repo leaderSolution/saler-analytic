@@ -1,0 +1,85 @@
+{% extends 'dashboard.html.twig' %}
+
+{% block title %}Hello ScheduleController!{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Dashboard</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+          <!-- Button trigger modal -->
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            Add visit
+          </button>
+        </div>
+      </div>
+      <!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add a new Visit</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      {{ form_start(form) }}
+      <div class="modal-body">
+      
+        <div class="row">
+         <div class="col-sm-8">
+          <label>Title</label>
+           {{ form_widget(form.title) }}
+         </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6">
+            <label>Start At</label>
+            {{ form_widget(form.startTime) }}
+          </div>
+          <div class="col-sm-6">
+            <label>End At</label>
+            {{ form_widget(form.endTime) }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+          <label>Background Color</label>
+          {{ form_widget(form.backgroundColor) }}
+        </div>
+        <div class="col">
+          <label>Border Color </label>
+          {{ form_widget(form.borderColor) }}
+        </div>
+        <div class="col">
+          <label>Text Color </label>
+          {{ form_widget(form.textColor) }}
+        </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <label>Client </label>
+            {{ form_widget(form.client) }}
+          </div>
+          <div class="col">
+            <a href="#">Add new client </a>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-check form-switch">
+            {{ form_widget(form.allDay) }}
+            <label class="form-check-label" for="{{ form.allDay.vars.id }}"></label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Save changes</button>
+      </div>
+      {{ form_end(form) }}
+    </div>
+  </div>
+</div>
+<div id='calendar'></div>
+{% endblock %}
+
+{% block javascripts %}   
+    {{ encore_entry_script_tags('schedule') }} 
+{% endblock %} 

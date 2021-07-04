@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Controller\ProfileController;
 use App\Repository\UserRepository;
@@ -37,7 +39,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
     normalizationContext: ['groups' => ['read:User']],
 
 )]
-class User implements UserInterface, JWTUserInterface, PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
      * @ORM\Id
@@ -64,6 +66,16 @@ class User implements UserInterface, JWTUserInterface, PasswordAuthenticatedUser
      * @ORM\Column(type="string")
      */
     private $password;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Visit::class, mappedBy="user")
+     */
+    private $visits;
+
+    public function __construct()
+    {
+        $this->visits = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -161,8 +173,34 @@ class User implements UserInterface, JWTUserInterface, PasswordAuthenticatedUser
         // $this->plainPassword = null;
     }
 
-    public static function createFromPayload($id, array $payload){
-
-        return (new User())->setId($id)->setEmail($payload['username'] ?? '');
+    /**
+     * @return Collection|Visit[]
+     */
+    public function getVisits(): Collection
+    {
+        return $this->visits;
     }
+
+    public function addVisit(Visit $visit): self
+    {
+        if (!$this->visits->contains($visit)) {
+            $this->visits[] = $visit;
+            $visit->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVisit(Visit $visit): self
+    {
+        if ($this->visits->removeElement($visit)) {
+            // set the owning side to null (unless already changed)
+            if ($visit->getUser() === $this) {
+                $visit->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

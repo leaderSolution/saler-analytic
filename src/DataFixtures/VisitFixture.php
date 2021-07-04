@@ -31,6 +31,10 @@ class VisitFixture extends Fixture
         $visit = new Visit();
         $visit->setTitle($this->faker->sentence());
         $visit->setStartTime($this->faker->dateTimeThisYear());
+        $visit->setBackgroundColor($this->faker->rgbCssColor());
+        $visit->setBorderColor($this->faker->rgbCssColor());
+        $visit->setTextColor($this->faker->hexcolor());
+        $visit->setAllDay($this->faker->boolean());
         /** @var DateTime */
         $sdt = $visit->getStartTime();
         /** @var DateTimeInterface */

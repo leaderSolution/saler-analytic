@@ -28,7 +28,7 @@ class ClientFixture extends Fixture
     public function getClient()
     {
         $client = new Client();
-        $client->setCodeUniq($this->faker->unique()->randomDigit());
+        $client->setCodeUniq($this->faker->unique()->numberBetween(1000, 9000));
         $client->setEmail($this->faker->email());
         $client->addAddress($this->getReference(AddressFixture::ADDR_REFERENCE));
         $this->setReference(self::CLIENT_REFERENCE, $client);

@@ -2,27 +2,47 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\VisitRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\VisitRepository;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
+use App\Controller\CommercialAddVisitController;
+use App\Controller\CommercialEditVisitController;
+use Symfony\Component\Validator\Constraints\Valid;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\Valid;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
  * @ORM\Entity(repositoryClass=VisitRepository::class)
  */
 #[ApiResource(
+    paginationItemsPerPage: 4,
+    paginationMaximumItemsPerPage: 4,
     normalizationContext: ['groups' => ['read:collection']],
     denormalizationContext: ['groups' => ['write:Visit']],
+    collectionOperations: [
+        'add' => [
+            'method' => 'POST',
+            'path' => '/visits/commercial',
+            'controller' => CommercialAddVisitController::class
+        ]
+    ],
     itemOperations: [
         'put',
+        'patch' => [
+            'method' => 'PATCH',
+            'path' => '/visits/commercial/edit/{id}',
+            'controller' => CommercialEditVisitController::class,
+        ],
         'delete',
         'get' => [
             'normalization_context' => [ 'groups' => ['read:collection', 'read:item', 'read:Visit']]
-        ]
         ],
-)]
+    ],
+),
+ApiFilter(SearchFilter::class, properties:['id' => 'exact', 'title' => 'partial'])    
+    ]
 class Visit
 {
     /**
@@ -63,6 +83,32 @@ class Visit
         Valid()
      ]
     private $client;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="visits")
+     */
+    #[Groups(['read:item', 'read:collection'])]
+    private $user;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $backgroundColor;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $borderColor;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $textColor;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $allDay;
 
     public function getId(): ?int
     {
@@ -113,6 +159,66 @@ class Visit
     public function setClient(?Client $client): self
     {
         $this->client = $client;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getBackgroundColor(): ?string
+    {
+        return $this->backgroundColor;
+    }
+
+    public function setBackgroundColor(?string $backgroundColor): self
+    {
+        $this->backgroundColor = $backgroundColor;
+
+        return $this;
+    }
+
+    public function getBorderColor(): ?string
+    {
+        return $this->borderColor;
+    }
+
+    public function setBorderColor(?string $borderColor): self
+    {
+        $this->borderColor = $borderColor;
+
+        return $this;
+    }
+
+    public function getTextColor(): ?string
+    {
+        return $this->textColor;
+    }
+
+    public function setTextColor(?string $textColor): self
+    {
+        $this->textColor = $textColor;
+
+        return $this;
+    }
+
+    public function getAllDay(): ?bool
+    {
+        return $this->allDay;
+    }
+
+    public function setAllDay(?bool $allDay): self
+    {
+        $this->allDay = $allDay;
 
         return $this;
     }

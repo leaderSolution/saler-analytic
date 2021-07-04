@@ -24,6 +24,10 @@ services:
         # explicitly configure the service
     App\Controller\ProfileController:
         tags: [controller.service_arguments]
-              
+    App\Controller\CommercialAddVisitController:
+        tags: [controller.service_arguments]
+
+    App\Controller\CommercialEditVisitController:
+        tags: [controller.service_arguments]            
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

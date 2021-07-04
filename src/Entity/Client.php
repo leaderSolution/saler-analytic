@@ -35,7 +35,7 @@ class Client
      */
     #[
         Groups(['read:Visit', 'write:Visit']),
-        Length(min: 6)
+        Length(min: 4)
       ]
     private $codeUniq;
 
@@ -152,5 +152,9 @@ class Client
         }
 
         return $this;
+    }
+
+    public function __toString(){
+        return $this->getCodeUniq();
     }
 }
