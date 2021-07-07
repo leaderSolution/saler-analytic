@@ -15,4 +15,12 @@ class DashboardController extends AbstractController
             'controller_name' => 'DashboardController',
         ]);
     }
+
+    #[Route('/admin', name: 'admin_dashboard')]
+    public function adminDashboard(): Response
+    {
+        return $this->render('dashboard/index.html.twig', [
+            'controller_name' => 'DashboardController',
+        ]);
+    }
 }

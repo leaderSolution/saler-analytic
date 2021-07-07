@@ -8,12 +8,14 @@ use App\Entity\Visit;
 use DateTimeInterface;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Symfony\Component\Security\Core\Security;
 
 class VisitFixture extends Fixture
 {
     private $faker;
     
-    public function __construct()
+    
+    public function __construct(private Security $security)
     {
         $this->faker = Factory::create();
     }
@@ -29,6 +31,7 @@ class VisitFixture extends Fixture
     public function getVisit()
     {
         $visit = new Visit();
+        $visit->setUser($this->getReference(UserFixture::USER_REFERENCE));
         $visit->setTitle($this->faker->sentence());
         $visit->setStartTime($this->faker->dateTimeThisYear());
         $visit->setBackgroundColor($this->faker->rgbCssColor());

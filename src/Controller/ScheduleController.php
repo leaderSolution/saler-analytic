@@ -2,14 +2,15 @@
 
 namespace App\Controller;
 
+use DateTime;
 use App\Entity\Visit;
 use App\Form\VisitType;
 use App\Repository\VisitRepository;
-use DateTime;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ScheduleController extends AbstractController
@@ -22,6 +23,7 @@ class ScheduleController extends AbstractController
         $visit = new Visit();
         $visit->setStartTime(new \DateTime());
         $visit->setEndTime(new \DateTime());
+        $visit->setUser($this->getUser());
         $form = $this->createForm(VisitType::class, $visit);
 
         $form->handleRequest($request);
@@ -70,13 +72,20 @@ class ScheduleController extends AbstractController
         $visitData =  json_encode($visit);
         $startAt = $request->get('startTime');
         $endAt = $request->get('endTime');
+        $title = $request->get('title');
 
-        if (self::INVALID_DATE !== $startAt) {
-            $visit->setStartTime(new DateTime($startAt));
+        if (null !== $title) {
+            $visit->setTitle($title);
+        } else {
+            if (self::INVALID_DATE !== $startAt) {
+                $visit->setStartTime(new DateTime($startAt));
+            }
+            if (self::INVALID_DATE !== $endAt) {
+                $visit->setEndTime(new DateTime($endAt));
+            }
         }
-        if (self::INVALID_DATE !== $endAt) {
-            $visit->setEndTime(new DateTime($endAt));
-        }
+        
+        
         
         $this->getDoctrine()->getManager()->flush();
 
@@ -87,5 +96,18 @@ class ScheduleController extends AbstractController
     public function profile(): Response
     {
         return $this->render('profile/index.html.twig');
+    }
+
+
+    #[Route('/visits', name: 'visit_index')]
+    public function visits(VisitRepository $v): Response
+    {
+        $visits = null;
+
+        if ($this->getUser()) {
+            $visits = $this->getUser()->getVisits();
+        }
+        
+        return $this->render('dashboard/visits.html.twig', ['visites' => $visits ]);
     }
 }

@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Log in!{% endblock %}
+
+{% block body %}
+
+<div class="content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+         {% if app.request.get('_route') == "admin_login" or "register" %} 
+          <img src="{{ asset('build/business-Plan-bro.svg') }}" alt="Image" class="img-fluid">
+         {% else %}
+          <img src="{{ asset('build/undraw_remotely_2j6y.svg') }}" alt="Image" class="img-fluid">
+         {% endif %}
+        </div>
+        <div class="col-md-6 contents">
+          <div class="row justify-content-center">
+            <div class="col-md-8">
+              
+            {% if app.request.get('_route') == 'register' %}
+              {% include "./security/_form_admin_register.html.twig" %}
+            {% else %}
+                
+                {% include "./security/_form_login.html.twig" %}
+                <span class="d-block text-left my-4 text-muted">&mdash; <a href="{{ path('register') }}">Espace Administration</a> &mdash;</span>
+            
+            {% endif %}
+            </div>
+          </div>
+          
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'dashboard.html.twig' %}
+
+{% block title %}Visites!{% endblock %}
+
+{% block content %}
+{% include "top-bar.html.twig" with {'title':'Visits','btn':''} %}
+<div class="card">
+    <div class="card-body">
+        <table id="example" class="card-body table table-striped dataTables_wrapper dt-bootstrap5" style="width:100%">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Start At</th>
+                <th>End At</th>
+                <th>Client</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for v in visites %}
+                <tr>
+                    <td>{{ v.title }}</td>
+                    <td>{{ v.startTime|date('d/m/Y H:i')}}</td>
+                    <td>{{ v.endTime|date('d/m/Y H:i')}}</td>
+                    <td>{{ v.client.email }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        
+</table>
+    </div>
+</div>
+{% endblock %}
+{% block javascripts %}
+<script>
+
+</script>
+{% endblock %}

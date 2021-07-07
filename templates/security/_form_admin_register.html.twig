@@ -1,0 +1,27 @@
+<h1>Register</h1>
+
+{# If there are any errors on the form, display them #}
+{% set formErrors = registrationForm.vars.errors.form.getErrors(true) %}
+{% if formErrors|length %}
+	<div class="alert alert-danger">
+		<ul>
+			{% for error in formErrors %}
+				<li>{{ error.message }}</li>
+			{% endfor %}
+		</ul>
+	</div>
+{% endif %}
+
+{# Render the Form #}
+{{ form_start(registrationForm) }}
+<div class="form-group first">
+	{{ form_row(registrationForm.email) }}
+</div>
+<div class="form-group mb-4">
+{{ form_row(registrationForm.plainPassword.first) }}
+</div>
+<div class="form-group">
+{{ form_row(registrationForm.plainPassword.second) }}
+</div>
+<button class="btn btn-block btn-success">Register</button>
+{{ form_end(registrationForm) }}

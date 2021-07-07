@@ -32,7 +32,10 @@
         "@fullcalendar/timegrid": "^5.8.0",
         "@popperjs/core": "^2.9.2",
         "bootstrap-icons": "^1.5.0",
+        "datatables.net": "^1.10.25",
+        "datatables.net-bs5": "^1.10.25",
         "fullcalendar": "^5.8.0",
+        "jquery-confirm": "^3.3.4",
         "moment": "^2.29.1",
         "moment-timezone": "^0.5.33",
         "popper.js": "^1.16.1"

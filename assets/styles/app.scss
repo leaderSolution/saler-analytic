@@ -1,5 +1,9 @@
 @import "custom";
 @import "~bootstrap/scss/bootstrap";
+@import url("https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css");
+@import url("https://cdn.jsdelivr.net/npm/fullcalendar@5.8.0/main.min.css");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/css/bootstrap.min.css");
+@import url("https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap5.min.css");
 #calendar {
     max-width: 900px;
     margin: 0 auto;

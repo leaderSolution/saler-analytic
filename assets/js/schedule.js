@@ -6,6 +6,7 @@ import listPlugin from '@fullcalendar/list';
 import { toMoment } from '@fullcalendar/moment'; // only for formatting
 import momentTimezonePlugin from '@fullcalendar/moment-timezone';
 import '../styles/app.scss'
+import 'jquery-confirm'
 
 document.addEventListener('DOMContentLoaded', function() {
   
@@ -31,48 +32,49 @@ document.addEventListener('DOMContentLoaded', function() {
         
         let start = toMoment(e.event.start, calendar)
         let end = toMoment(e.event.end, calendar)
-        console.log(start.format())
-        console.log(end.format())
-          $.post(`/edit/${e.event.id}`, { startTime: start.format(), endTime: end.format() })
-                .done(function (data) {
-                  console.log(data)
-            })
-              .fail(function() {
-                console.log( "error" );
-            })
-            .always(function() {
-                //window.location.reload(true);
-            });
-        // xhr.open('PATCH', url)
-        // xhr.setRequestHeader("Content-Type", "application/merge-patch+json");
         
-        
-        
-        // xhr.send(JSON.stringify(visit))
+        postData(`/edit/${e.event.id}`, { startTime: start.format(), endTime: end.format() })
+
        });
        // Edit a visit's title
        calendar.on('eventClick', (calEvent, jsEvent, view) => {
-        let xhr = new XMLHttpRequest
-        let url = `/api/visits/commercial/edit/${calEvent.event.id}`
-       
-        var title = prompt('Event Title:', calEvent.title,{ buttons: { Ok: true, Cancel: false} });
-        
-        if (title){
-            calEvent.title = title;
-            let visitTitle = {
-              'title' : title,
-            }
-          xhr.open('PATCH', url)
-          xhr.setRequestHeader("Content-Type", "application/merge-patch+json");
-          
-          xhr.send(JSON.stringify(visitTitle))
-        }else {
-          console.log(calEvent.jsEvent.toElement)
-        var i = document.createElement('i');
-        i.className = 'bi bi-calendar-x';
-       calEvent.jsEvent.toElement.append(i);
-        }
-        
+        $.confirm({
+          title: 'Edit Visit!',
+          content: '' +
+          '<form action="" class="formName">' +
+          '<div class="form-group">' +
+          '<label>New Title </label>' +
+          '<input type="text" value="'+calEvent.event.title+'" class="title form-control" required />' +
+          '</div>' +
+          '</form>',
+          buttons: {
+              formSubmit: {
+                  text: 'Submit',
+                  btnClass: 'btn btn-primary',
+                  action: function () {
+                      var title = this.$content.find('.title').val();
+                      if(!title){
+                          $.alert('provide a valid title');
+                          return false;
+                      }
+                      postData(`/edit/${calEvent.event.id}`, {title : title})
+                      
+                  }
+              },
+              cancel: function () {
+                  //close
+              },
+          },
+          onContentReady: function () {
+              // bind to events
+              var jc = this;
+              this.$content.find('form').on('submit', function (e) {
+                  // if the user submits the form by pressing enter in the field.
+                  e.preventDefault();
+                  jc.$$formSubmit.trigger('click'); // reference the button and click it
+              });
+          }
+      });
 
        });
        
@@ -83,8 +85,21 @@ document.addEventListener('DOMContentLoaded', function() {
     console.error('Error:', error);
   });
 
+  var postData = (url, data ) => {
+    $.post(url, data)
+      .done(function (data) {
+        $.alert('done !')
+      })
+      .fail(function() {
+        $.alert( "error" );
+      })
+      .always(function() {
+        setTimeout(function(){location.reload()}, 2000);
+      });
+  }
   
   
-
+    
+    
   
 });

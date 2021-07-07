@@ -20,6 +20,7 @@ class AppFixtures extends Fixture
         return [
             AddressFixture::class,
             ClientFixture::class,
+            UserFixture::class,
             VisitFixture::class
         ];
     }

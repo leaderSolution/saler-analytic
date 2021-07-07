@@ -8,9 +8,13 @@
 // any CSS you import will output into a single css file (app.css in this case)
 import './styles/app.scss';
 import './styles/login.css'
+import 'datatables.net'
+import 'datatables.net-bs5'
 // You can specify which plugins you need
 import 'bootstrap';
 require('bootstrap-icons/font/bootstrap-icons.css');
-
+require('jquery-confirm')
 // start the Stimulus application
 import './bootstrap';
+
+$('#example').DataTable();
