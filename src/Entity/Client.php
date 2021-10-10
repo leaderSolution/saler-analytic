@@ -55,14 +55,14 @@ class Client
     private $visits;
 
     /**
-     * @ORM\OneToMany(targetEntity=Address::class, mappedBy="client")
+     * @ORM\Column(type="datetime", nullable=true)
      */
-    private $address;
+    private $createdAt;
 
+    
     public function __construct()
     {
         $this->visits = new ArrayCollection();
-        $this->address = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -124,37 +124,22 @@ class Client
         return $this;
     }
 
-    /**
-     * @return Collection|Address[]
-     */
-    public function getAddress(): Collection
-    {
-        return $this->address;
-    }
-
-    public function addAddress(Address $address): self
-    {
-        if (!$this->address->contains($address)) {
-            $this->address[] = $address;
-            $address->setClient($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAddress(Address $address): self
-    {
-        if ($this->address->removeElement($address)) {
-            // set the owning side to null (unless already changed)
-            if ($address->getClient() === $this) {
-                $address->setClient(null);
-            }
-        }
-
-        return $this;
-    }
 
     public function __toString(){
         return $this->getCodeUniq();
     }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+   
 }

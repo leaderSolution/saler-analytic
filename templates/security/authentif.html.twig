@@ -8,7 +8,7 @@
     <div class="container">
       <div class="row">
         <div class="col-md-6">
-         {% if app.request.get('_route') == "admin_login" or "register" %} 
+         {% if app.request.get('_route') == "admin_login" or app.request.get('_route') == "register" %} 
           <img src="{{ asset('build/business-Plan-bro.svg') }}" alt="Image" class="img-fluid">
          {% else %}
           <img src="{{ asset('build/undraw_remotely_2j6y.svg') }}" alt="Image" class="img-fluid">

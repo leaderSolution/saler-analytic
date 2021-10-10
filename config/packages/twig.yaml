@@ -1,6 +1,9 @@
 twig:
     default_path: '%kernel.project_dir%/templates'
     form_themes: ['bootstrap_5_layout.html.twig']
+    globals:
+        # the value is the service's id
+        users: '@App\Service\GlobalVar'
 
 when@test:
     twig:

@@ -12,11 +12,9 @@
     <body>
 
        {% block body %}{% endblock %}
-
-{{ encore_entry_script_tags('app') }}
-   
-        {% block javascripts %}
-            
+       {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+            {# <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.jquery.min.js"></script> #}
         {% endblock %}
     </body>
 </html>

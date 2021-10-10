@@ -1,0 +1,9 @@
+{% for client in clients %}
+	<li class="emailLi list-group-item" 
+        data-action="click->autocomplete-transition#fillInput" 
+        data-autocomplete-transition-target="email">{{ client.email }}</li>
+
+{% else %}
+	{# <li class="list-group-item">Add New client</li> #}
+
+{% endfor %}

@@ -2,9 +2,12 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\AddressRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\AddressRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=AddressRepository::class)
@@ -20,22 +23,25 @@ class Address
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=55)
      */
+    #[Assert\NotBlank]
     private $city;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=55)
      */
+    #[Assert\NotBlank]
     private $street;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=55)
      */
+    #[Assert\NotBlank]
     private $zip;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=55, nullable=true)
      */
     private $country;
 
@@ -49,11 +55,17 @@ class Address
      */
     private $latitude;
 
+   
+
     /**
-     * @ORM\ManyToOne(targetEntity=Client::class, inversedBy="address")
-     * @ORM\JoinColumn(nullable=true)
+     * @ORM\OneToMany(targetEntity=Visit::class, mappedBy="address")
      */
-    private $client;
+    private $visits;
+
+    public function __construct()
+    {
+        $this->visits = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -132,14 +144,34 @@ class Address
         return $this;
     }
 
-    public function getClient(): ?Client
+
+
+    /**
+     * @return Collection|Visit[]
+     */
+    public function getVisits(): Collection
     {
-        return $this->client;
+        return $this->visits;
     }
 
-    public function setClient(?Client $client): self
+    public function addVisit(Visit $visit): self
     {
-        $this->client = $client;
+        if (!$this->visits->contains($visit)) {
+            $this->visits[] = $visit;
+            $visit->setAddress($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVisit(Visit $visit): self
+    {
+        if ($this->visits->removeElement($visit)) {
+            // set the owning side to null (unless already changed)
+            if ($visit->getAddress() === $this) {
+                $visit->setAddress(null);
+            }
+        }
 
         return $this;
     }

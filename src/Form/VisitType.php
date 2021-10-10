@@ -3,16 +3,25 @@
 namespace App\Form;
 
 use App\Entity\Visit;
+use App\Entity\Client;
+use App\Repository\ClientRepository;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ColorType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 
 class VisitType extends AbstractType
 {
+    
+    public function __construct(private ClientRepository $clientRepo)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -29,7 +38,9 @@ class VisitType extends AbstractType
             ->add('borderColor', ColorType::class)
             ->add('textColor', ColorType::class)
             ->add('allDay', CheckboxType::class, ['attr' => ['class' => 'form-check-input']])
-            ->add('client')
+            ->add('client', ClientSelectTextType::class)
+            ->add('address', AddressType::class, [])
+            ;
         ;
     }
 

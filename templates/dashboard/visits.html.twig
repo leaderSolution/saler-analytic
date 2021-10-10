@@ -13,6 +13,7 @@
                 <th>Start At</th>
                 <th>End At</th>
                 <th>Client</th>
+                <th>ACTIONS</th>
             </tr>
         </thead>
         <tbody>
@@ -22,6 +23,9 @@
                     <td>{{ v.startTime|date('d/m/Y H:i')}}</td>
                     <td>{{ v.endTime|date('d/m/Y H:i')}}</td>
                     <td>{{ v.client.email }}</td>
+                    <td><a href="{{ path('visit_edit', {'id': v.id })}}">
+						<i class="fs-5 bi-pencil-square"></i>
+					</a></td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -31,6 +35,7 @@
 </div>
 {% endblock %}
 {% block javascripts %}
+{{ parent() }}
 <script>
 
 </script>

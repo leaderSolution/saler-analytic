@@ -1,27 +1,35 @@
-<h1>Register</h1>
-
-{# If there are any errors on the form, display them #}
-{% set formErrors = registrationForm.vars.errors.form.getErrors(true) %}
-{% if formErrors|length %}
-	<div class="alert alert-danger">
-		<ul>
-			{% for error in formErrors %}
-				<li>{{ error.message }}</li>
-			{% endfor %}
-		</ul>
-	</div>
-{% endif %}
+<div class="mb-4">
+	<h3>Admin registration</h3>
+	<p
+		class="mb-4">
+		{# If there are any errors on the form, display them #}
+		{% set formErrors = registrationForm.vars.errors.form.getErrors(true) %}
+		{% if formErrors|length %}
+			<div class="alert alert-danger">
+				<ul>
+					{% for error in formErrors %}
+						<li>{{ error.message }}</li>
+					{% endfor %}
+				</ul>
+			</div>
+		{% endif %}
+	</p>
+</div>
 
 {# Render the Form #}
 {{ form_start(registrationForm) }}
 <div class="form-group first">
 	{{ form_row(registrationForm.email) }}
 </div>
-<div class="form-group mb-4">
-{{ form_row(registrationForm.plainPassword.first) }}
+<div class="form-group">
+	{{ form_row(registrationForm.plainPassword.first) }}
 </div>
 <div class="form-group">
-{{ form_row(registrationForm.plainPassword.second) }}
+	{{ form_row(registrationForm.plainPassword.second) }}
 </div>
-<button class="btn btn-block btn-success">Register</button>
+<br>
+<div class="d-grid gap-2">
+	<button class="btn btn-block btn-success">Register</button>
+</div>
+
 {{ form_end(registrationForm) }}

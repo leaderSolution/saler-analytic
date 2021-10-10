@@ -14,7 +14,74 @@ import 'datatables.net-bs5'
 import 'bootstrap';
 require('bootstrap-icons/font/bootstrap-icons.css');
 require('jquery-confirm')
+import 'bootstrap-autocomplete'
 // start the Stimulus application
 import './bootstrap';
 
-$('#example').DataTable();
+$(document).ready(function() {
+
+   // Setup - add a text input to each footer cell
+    $('#example thead tr').clone(true).appendTo( '#example thead' );
+
+    $('#example thead tr:eq(1) th').each( function (i) {
+        var title = $(this).text();
+        
+        if(title.toUpperCase() !== "ACTIONS"){
+            $(this).html( '<input class="form-control" type="text" placeholder="Search '+title+'" />' );
+            $( 'input', this ).on( 'keyup change', function () {
+                if ( table.column(i).search() !== this.value ) {
+                    table
+                        .column(i)
+                        .search( this.value )
+                        .draw();
+                }
+            } );
+        }else {
+            
+            $(this).empty()
+        }
+        
+        
+ 
+        
+    } );
+   
+    
+ 
+    var table = $('#example').DataTable( {
+        orderCellsTop: true,
+        fixedHeader: true
+    } );
+    var checkBoxs = document.getElementsByClassName("visitActive");
+    console.log(checkBoxs)
+    for(var i=0; i < checkBoxs.length; i++){
+        console.log(checkBoxs[i].value)
+        $('#'+checkBoxs[i].value ).on('click', (e) => {
+            let id = e.target.value
+            if(e.target.checked){
+                activate('/admin/verify-visit', {isActive: 1, visitID: id  })
+            }else {
+                activate('/admin/verify-visit', {isActive: 0, visitID: id })
+            }
+        });
+        
+    }
+   
+   
+  
+    function activate(url, data){
+        $.post(url, data)
+        .done(function (data) {
+          $.alert('Done !!')
+        })
+        .fail(function() {
+          $.alert( "error" );
+        })
+        .always(function() {
+          setTimeout(function(){location.reload()}, 2000);
+        });
+    }
+
+} );
+
+

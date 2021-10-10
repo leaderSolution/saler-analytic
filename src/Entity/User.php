@@ -2,22 +2,25 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
-use App\Controller\ProfileController;
 use App\Repository\UserRepository;
+use App\Controller\ProfileController;
 use ApiPlatform\Core\Action\NotFoundAction;
+use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
-use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */
-#[ApiResource(
+#[  UniqueEntity('email'),
+    ApiResource(
     collectionOperations:[
         'profile' => [
             'pagination_enabled' => false,
@@ -52,7 +55,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      */
-    #[Groups(['read:User'])]
+    #[Groups(['read:User']),
+      Assert\Email(message: 'The email {{ value }} is not a valid email.'),
+    ]
     private $email;
 
     /**

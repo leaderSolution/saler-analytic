@@ -84,6 +84,12 @@ Encore
                  // only copy files matching this pattern
                  //pattern: /\.(png|jpg|jpeg)$/
              })
+    // .autoProvideVariables({
+    //     $: 'jquery',
+    //     jQuery: 'jquery',
+    //     'window.jQuery': 'jquery',
+    // })
+                     
 ;
 
 module.exports = Encore.getWebpackConfig();

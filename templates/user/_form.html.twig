@@ -1,0 +1,25 @@
+{{ form_start(form) }}
+<div class="modal-body">
+
+	<p class="mb-4">
+		{# If there are any errors on the form, display them #}
+		{% set formErrors = form.vars.errors.form.getErrors(true) %}
+		{% if formErrors|length %}
+        
+			<div class="alert alert-danger">
+				<ul>
+					{% for error in formErrors %}
+						<li>{{ error.message }}</li>
+					{% endfor %}
+				</ul>
+			</div>
+        {% else %}    
+		{% endif %}
+	</p>
+	{{ form_widget(form) }}
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+	<button id="btnFormSubmit" type="submit" class="btn btn-primary">Save changes</button>
+</div>
+{{ form_end(form) }}

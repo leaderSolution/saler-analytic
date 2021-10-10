@@ -1,13 +1,15 @@
 {% extends "base.html.twig" %}
 {% block body %}
 	{% set route = app.request.get('_route') %}
-    {% set adminMenu = [{ 'text': 'Dashboard', 'icon': 'fs-4 bi-speedometer2','route':'dashboard', 'path': path('admin_dashboard'),},
-                        { 'text': 'Commerciaux', 'icon': 'fs-4 bi-speedometer2','route':'dashboard', 'path': path('admin_dashboard'),},
-                        
+    {% set adminMenu = [{'text': 'Dashboard', 'icon': 'fs-4 bi-speedometer2','route':'dashboard', 'path': path('admin_dashboard'),},
+                        {'text': 'Commerciaux', 'icon': 'fs-4 bi bi-people','route':'user_index', 'path': path('user_index'),},
+                        {'text': 'Visits', 'icon': 'fs-4 bi bi-card-list','route':'all_visits', 'path': path('all_visits'), },
+						{'text': 'Clients', 'icon': 'fs-4 bi bi-person-lines-fill','route':'all_clients', 'path': path('all_clients'), },
+
                         ] %}
-    {% set userMenu = [ { 'text': 'Dashboard', 'icon': 'fs-4 bi-speedometer2','route':'dashboard', 'path': path('dashboard'),},
-                        { 'text': 'Agenda', 'icon':'bi bi-calendar-event','route':'schedule', 'path': path('schedule')},
-                        { 'text': 'Visits', 'icon':'bi bi-card-list', 'route':'visit_index', 'path':path('visit_index')},
+    {% set userMenu = [ {'text': 'Dashboard', 'icon': 'fs-4 bi-speedometer2','route':'dashboard', 'path': path('dashboard'),},
+                        {'text': 'Agenda', 'icon':'bi bi-calendar-event','route':'schedule', 'path': path('schedule')},
+                        {'text': 'Visits', 'icon':'bi bi-card-list', 'route':'visit_index', 'path':path('visit_index')},
                             ]%}                    
 	<nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
 		<div class="container">

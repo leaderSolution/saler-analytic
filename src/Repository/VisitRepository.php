@@ -19,22 +19,48 @@ class VisitRepository extends ServiceEntityRepository
         parent::__construct($registry, Visit::class);
     }
 
-    // /**
-    //  * @return Visit[] Returns an array of Visit objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @return Visit[] Returns an array of Visit objects
+     */
+    public function findVisitsPerDayOfThisWeek($value)
     {
         return $this->createQueryBuilder('v')
-            ->andWhere('v.exampleField = :val')
+            ->andWhere("DATE_FORMAT(v.startTime, '%Y-%m-%d') = :val")
             ->setParameter('val', $value)
             ->orderBy('v.id', 'ASC')
-            ->setMaxResults(10)
+            //->setMaxResults(10)
             ->getQuery()
             ->getResult()
         ;
     }
+
+    /**
+      * @return Visit[] Returns an array of Visit objects
+      */
+    public function findVisitsPerMonthOfThisYear($value)
+    {
+        return $this->createQueryBuilder('v')
+            ->andWhere("DATE_FORMAT(v.startTime, '%Y-%m') = :val")
+            ->setParameter('val', $value)
+            ->orderBy('v.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    /**
+    * @return Visit[] Returns an array of Visit objects
     */
+    public function findNewVisits($value)
+    {
+        return $this->createQueryBuilder('v')
+              ->andWhere("DATE_FORMAT(v.startTime, '%Y-%m-%d') = :val")
+              ->setParameter('val', $value)
+              ->orderBy('v.id', 'ASC')
+              ->getQuery()
+              ->getResult()
+          ;
+    }
 
     /*
     public function findOneBySomeField($value): ?Visit

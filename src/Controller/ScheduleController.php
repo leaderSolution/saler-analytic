@@ -5,6 +5,7 @@ namespace App\Controller;
 use DateTime;
 use App\Entity\Visit;
 use App\Form\VisitType;
+use App\Repository\ClientRepository;
 use App\Repository\VisitRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,7 +19,7 @@ class ScheduleController extends AbstractController
     public const INVALID_DATE = 'Invalid date';
 
     #[Route('/schedule', name: 'schedule')]
-    public function index(Request $request): Response
+    public function index(Request $request, ClientRepository $clientRepository): Response
     {
         $visit = new Visit();
         $visit->setStartTime(new \DateTime());
@@ -33,16 +34,36 @@ class ScheduleController extends AbstractController
             $entityManager->persist($visit);
             $entityManager->flush();
 
+            if ($request->isXmlHttpRequest()) {
+                return new Response(null, 204);
+            }
+
             return $this->redirectToRoute('schedule');
         }
+        $searchTerm = $request->query->get('q');
 
-        return $this->render('schedule/index.html.twig', ['form' => $form->createView()]);
+        
+        $clients = $clientRepository->search($searchTerm);
+
+        if ($request->query->get('preview')) {
+            return $this->render('client/_searchPreview.html.twig', [
+                'clients' => $clients,
+            ]);
+        }
+        $template = $request->isXmlHttpRequest() ? '_form.html.twig' : 'index.html.twig';
+
+        return $this->render('schedule/' . $template, [
+            'form' => $form->createView(),'searchTerm' => $searchTerm
+        ], new Response(
+            null,
+            $form->isSubmitted() && !$form->isValid() ? 422 : 200,
+        ));
     }
     
     #[Route('/user/schedule', name: 'user_schedule')]
     public function getUserSchedule(VisitRepository $visitRepository): JsonResponse
     {
-        $visits = $visitRepository->findAll();
+        $visits = $this->getUser()->getVisits();
 
         $pickedVisits = [];
 
@@ -99,7 +120,7 @@ class ScheduleController extends AbstractController
     }
 
 
-    #[Route('/visits', name: 'visit_index')]
+    #[Route('/visits', name: 'visit_index', methods: ['GET', 'POST'])]
     public function visits(VisitRepository $v): Response
     {
         $visits = null;
@@ -109,5 +130,23 @@ class ScheduleController extends AbstractController
         }
         
         return $this->render('dashboard/visits.html.twig', ['visites' => $visits ]);
+    }
+
+    #[Route('/edit/{id}', name: 'visit_edit', methods: ['GET', 'POST'])]
+    public function editVisit(Request $request, Visit $visit): Response
+    {
+        $form = $this->createForm(VisitType::class, $visit);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
+
+            //return $this->redirectToRoute('visit_edit', ['id' => $request->get('id')]);
+        }
+
+        return $this->renderForm('saler/edit_visit.html.twig', [
+            'visit' => $visit,
+            'form' => $form,
+        ]);
     }
 }

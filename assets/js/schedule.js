@@ -9,7 +9,7 @@ import '../styles/app.scss'
 import 'jquery-confirm'
 
 document.addEventListener('DOMContentLoaded', function() {
-  
+   
   var calendarEl = document.getElementById('calendar')
   fetch('/user/schedule')
   .then(response => response.json())
@@ -97,9 +97,5 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(function(){location.reload()}, 2000);
       });
   }
-  
-  
-    
-    
-  
+
 });

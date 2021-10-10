@@ -110,6 +110,17 @@ class Visit
      */
     private $allDay;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Address::class, inversedBy="visits", cascade={"persist"})
+     */
+    #[ Valid() ]
+    private $address;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $active;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -219,6 +230,30 @@ class Visit
     public function setAllDay(?bool $allDay): self
     {
         $this->allDay = $allDay;
+
+        return $this;
+    }
+
+    public function getAddress(): ?Address
+    {
+        return $this->address;
+    }
+
+    public function setAddress(?Address $address): self
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    public function getActive(): ?bool
+    {
+        return $this->active;
+    }
+
+    public function setActive(?bool $active): self
+    {
+        $this->active = $active;
 
         return $this;
     }
