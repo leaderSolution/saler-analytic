@@ -38,13 +38,25 @@ document.addEventListener('DOMContentLoaded', function() {
        });
        // Edit a visit's title
        calendar.on('eventClick', (calEvent, jsEvent, view) => {
+           let isChecked =''
+           if(calEvent.event.extendedProps.isDone){
+               isChecked = 'checked'
+           }
+           if(! calEvent.event.extendedProps.isDone){
+               isChecked = ''
+           }
+           console.log(calEvent.event.extendedProps.isDone)
         $.confirm({
           title: 'Edit Visit!',
           content: '' +
           '<form action="" class="formName">' +
           '<div class="form-group">' +
           '<label>New Title </label>' +
-          '<input type="text" value="'+calEvent.event.title+'" class="title form-control" required />' +
+          '<input type="text" value="'+calEvent.event.title+'" class="title form-control" required />\n' +
+          '<div class="form-check">\n' +
+              '  <input class="isDone form-check-input" type="checkbox" id="idDone" '+isChecked+'>\n' +
+              '  <label class="form-check-label" for="idDone">Done</label>\n' +
+          '</div>'+
           '</div>' +
           '</form>',
           buttons: {
@@ -52,12 +64,14 @@ document.addEventListener('DOMContentLoaded', function() {
                   text: 'Submit',
                   btnClass: 'btn btn-primary',
                   action: function () {
-                      var title = this.$content.find('.title').val();
+                      let title = this.$content.find('.title').val();
+                      let isDone = this.$content.find('.isDone').prop("checked");
                       if(!title){
                           $.alert('provide a valid title');
                           return false;
                       }
-                      postData(`/edit/${calEvent.event.id}`, {title : title})
+                      console.log(isDone)
+                     postData(`/edit/${calEvent.event.id}`, {title : title, isDone: isDone})
                       
                   }
               },
@@ -67,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
           },
           onContentReady: function () {
               // bind to events
-              var jc = this;
+              let jc = this;
               this.$content.find('form').on('submit', function (e) {
                   // if the user submits the form by pressing enter in the field.
                   e.preventDefault();
@@ -85,10 +99,11 @@ document.addEventListener('DOMContentLoaded', function() {
     console.error('Error:', error);
   });
 
-  var postData = (url, data ) => {
+  let postData = (url, data ) => {
     $.post(url, data)
       .done(function (data) {
         $.alert('done !')
+          console.log(data)
       })
       .fail(function() {
         $.alert( "error" );

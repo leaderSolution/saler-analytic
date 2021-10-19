@@ -30,7 +30,7 @@ class ClientFixture extends Fixture
         $client = new Client();
         $client->setCodeUniq($this->faker->unique()->numberBetween(1000, 9000));
         $client->setEmail($this->faker->email());
-        $client->addAddress($this->getReference(AddressFixture::ADDR_REFERENCE));
+        //$client->addAddress($this->getReference(AddressFixture::ADDR_REFERENCE));
         $this->setReference(self::CLIENT_REFERENCE, $client);
         return $client;
     }

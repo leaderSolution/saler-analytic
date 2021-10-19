@@ -50,7 +50,7 @@ class ScheduleController extends AbstractController
                 'clients' => $clients,
             ]);
         }
-        $template = $request->isXmlHttpRequest() ? '_form.html.twig' : 'index.html.twig';
+        $template = $request->isXmlHttpRequest() ? '_form.html.twig' : 'all_clients.html.twig';
 
         return $this->render('schedule/' . $template, [
             'form' => $form->createView(),'searchTerm' => $searchTerm
@@ -76,7 +76,8 @@ class ScheduleController extends AbstractController
                 'backgroundColor' => $visit->getBackgroundColor(),
                 'borderColor' => $visit->getBorderColor(),
                 'textColor' => $visit->getTextColor(),
-                'allDay' => $visit->getAllDay()
+                'allDay' => $visit->getAllDay(),
+                'isDone' => $visit->getIsDone(),
 
 
             ];
@@ -94,7 +95,14 @@ class ScheduleController extends AbstractController
         $startAt = $request->get('startTime');
         $endAt = $request->get('endTime');
         $title = $request->get('title');
+        $isDone = $request->get('isDone');
 
+        if($isDone == 'true'){
+            $visit->setIsDone(true);
+        }
+        if($isDone == 'false'){
+            $visit->setIsDone(false);
+        }
         if (null !== $title) {
             $visit->setTitle($title);
         } else {
@@ -110,13 +118,13 @@ class ScheduleController extends AbstractController
         
         $this->getDoctrine()->getManager()->flush();
 
-        return  new JsonResponse($visit);
+        return  new JsonResponse($isDone);
     }
 
     #[Route('/profile', name: 'profile')]
     public function profile(): Response
     {
-        return $this->render('profile/index.html.twig');
+        return $this->render('profile/all_clients.html.twig');
     }
 
 
@@ -129,10 +137,10 @@ class ScheduleController extends AbstractController
             $visits = $this->getUser()->getVisits();
         }
         
-        return $this->render('dashboard/visits.html.twig', ['visites' => $visits ]);
+        return $this->render('seller/visits.html.twig', ['visites' => $visits ]);
     }
 
-    #[Route('/edit/{id}', name: 'visit_edit', methods: ['GET', 'POST'])]
+    #[Route('/visits/edit/{id}', name: 'visit_edit', methods: ['GET', 'POST'])]
     public function editVisit(Request $request, Visit $visit): Response
     {
         $form = $this->createForm(VisitType::class, $visit);
@@ -141,12 +149,24 @@ class ScheduleController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
 
-            //return $this->redirectToRoute('visit_edit', ['id' => $request->get('id')]);
+            return $this->redirectToRoute('visit_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('saler/edit_visit.html.twig', [
+        return $this->renderForm('seller/edit_visit.html.twig', [
             'visit' => $visit,
             'form' => $form,
         ]);
+    }
+
+
+    #[Route('/delete-visit', name: 'delete_visit', methods: ['POST'])]
+    public function sellerDeleteVisit(Request $request, VisitRepository $visitRep): Response
+    {
+
+        $visitID = (int) $request->get('visitID');
+        $visit = $visitRep->findOneBy(['id' => $visitID]);
+        $this->getDoctrine()->getManager()->remove($visit);
+        $this->getDoctrine()->getManager()->flush();
+        return new JsonResponse($visit->getTitle());
     }
 }

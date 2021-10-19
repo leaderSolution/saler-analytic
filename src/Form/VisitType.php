@@ -7,6 +7,7 @@ use App\Entity\Client;
 use App\Repository\ClientRepository;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -32,6 +33,16 @@ class VisitType extends AbstractType
                 ],
                 
             ])
+            ->add('type', ChoiceType::class, [
+                'placeholder' => 'Choose an option',
+                'choices'  => [
+                    'Assistance' => 1,
+                    'Delivery' => 2,
+                    'Recovery' => 3,
+                    'Other' => 4
+                ],
+            ])
+            ->add('comment')
             ->add('startTime', DateTimeType::class, ['widget' => 'single_text',])
             ->add('endTime', DateTimeType::class, ['widget' => 'single_text',])
             ->add('backgroundColor', ColorType::class)

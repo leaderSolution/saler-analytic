@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20210624182000 extends AbstractMigration
+final class Version20211012183418 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,16 +20,14 @@ final class Version20210624182000 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE visit ADD user_id INT DEFAULT NULL');
-        $this->addSql('ALTER TABLE visit ADD CONSTRAINT FK_437EE939A76ED395 FOREIGN KEY (user_id) REFERENCES user (id)');
-        $this->addSql('CREATE INDEX IDX_437EE939A76ED395 ON visit (user_id)');
+        $this->addSql('CREATE TABLE goal (id INT AUTO_INCREMENT NOT NULL, nb_visits INT DEFAULT NULL, period INT DEFAULT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('ALTER TABLE client ADD designation VARCHAR(255) DEFAULT NULL, DROP goal');
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE visit DROP FOREIGN KEY FK_437EE939A76ED395');
-        $this->addSql('DROP INDEX IDX_437EE939A76ED395 ON visit');
-        $this->addSql('ALTER TABLE visit DROP user_id');
+        $this->addSql('DROP TABLE goal');
+        $this->addSql('ALTER TABLE client ADD goal INT DEFAULT NULL, DROP designation');
     }
 }

@@ -12,6 +12,8 @@
 				<div class="col">
 					<label>Title</label>
 					{{ form_widget(form.title) }}
+					<label>Type</label>
+					{{ form_widget(form.type) }}
 					<br>
 					<div class="row">
 						<div class="col">
@@ -37,20 +39,31 @@
 							{{ form_widget(form.endTime) }}
 						</div>
 					</div>
-          {{ form_widget(form.allDay) }}
+					<div class="row">
+						<div class="col">
+							<label>Comment</label>
+							{{ form_widget(form.comment) }}
+						</div>
+						<div class="col">
+							<label>AllDay</label>
+							{{ form_widget(form.allDay) }}
+						</div>
+					</div>
+
 				</div>
 				<div class="col">
 					  <label>Vise-à-vis du client </label>
-					  {{ form_widget(form.client) }}
-            <label>Addresse </label>
-					  {{ form_widget(form.address) }}
+					  	{{ form_widget(form.client) }}
+					<br>
+                      <label>Addresse </label>
+					  	{{ form_widget(form.address) }}
 				</div>
 				
 			</div>
 		</div>
 		<div class="card-footer">
-			<button type="button" class="btn btn-secondary">Annuler</button>
-			<button type="submit" class="btn btn-primary">Save changes</button>
+			<a href="{{ path('visit_index') }}" type="button" class="btn btn-secondary">Annuler</a>
+			<button formnovalidate type="submit" class="btn btn-primary">Save changes</button>
 		</div>
 	</div>
 {{ form_end(form) }}

@@ -65,9 +65,59 @@ class ClientController extends AbstractController
     #[Route('/admin/all', name: 'all_clients', methods: ['GET'])]
     public function allClients(ClientRepository $clientRepo): Response
     {
-        return $this->render('client/index.html.twig', [
+       return $this->render('supervisor/all_clients.html.twig', [
             'clients' => $clientRepo->findAll(),
         ]);
+    }
+
+    #[Route('/admin/show-chart-goal-clients', name: 'show_chart_goal_clients', methods: ['GET','POST'])]
+    public function showChartGoalClients(Request $request, ClientRepository $clientRepo): JsonResponse
+    {
+        $goals = [];
+        $nbV = 0;
+        $nbVisits = [];
+        $dataNbV = [];
+        $periodP = '';
+        $periodR = '';
+        $dataClient = [];
+        $temp = 0;
+        $year = $request->get('year');
+        $now = new \DateTime('now');
+        $clients = $clientRepo->findAll();
+
+        $period = ['Day','Week','Month','Year'];
+
+        foreach ($period as $key=>$p){
+
+            foreach ($clients as $client) {
+                $dataClient [] = $client->getCodeUniq();
+
+
+                if($client->getGoals()->isEmpty()){
+                    $periodP =$p;
+                    $temp = 0;
+                }else {
+
+                    foreach ($client->getGoals() as $goal){
+
+                        if(($key+1) == $goal->getPeriod()){
+                            $periodP =$p;
+                            $goal->getCreatedAt()->format('Y') === $year ? $temp = $goal->getNbVisits() : $temp = 0 ;
+                        }
+
+
+                    }
+
+                }
+                $nbVisits[] = $temp;
+               $temp = 0;
+            }
+            $goals [] = (object) ["name" => $periodP, "data" => $nbVisits];
+            $nbVisits = [];
+
+        }
+        return new JsonResponse([$key,'categories' => array_unique($dataClient), 'Series' => $goals]);
+
     }
 
     #[Route('/admin/{id}/edit', name: 'client_edit', methods: ['GET', 'POST'])]
@@ -77,12 +127,17 @@ class ClientController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if(! empty($form->getData()->getGoals())){
+                foreach ($form->getData()->getGoals() as $goal){
+                    $goal->setClient($client);
+                }
+            }
             $this->getDoctrine()->getManager()->flush();
 
             return $this->redirectToRoute('all_clients', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('client/edit.html.twig', [
+        return $this->renderForm('supervisor/edit_client.html.twig', [
             'client' => $client,
             'form' => $form,
         ]);

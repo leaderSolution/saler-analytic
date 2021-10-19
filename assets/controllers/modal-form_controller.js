@@ -33,6 +33,7 @@ export default class extends Controller {
         });
             
             this.modal.hide();
+            window.location.reload();
             this.dispatch('success');
 
         }catch(e){

@@ -7,6 +7,9 @@
 		<div class="col-sm-8">
 			{{ form_row(form.title) }}
 		</div>
+		<div class="col-sm-4">
+			{{ form_row(form.type) }}
+		</div>
 	</div>
 	<div class="row">
 		<div class="col-sm-6">
@@ -74,7 +77,11 @@
 			<label class="form-check-label" for="{{ form.allDay.vars.id }}"></label>
 		</div>
 	</div>
-	
+	<div class="row">
+		<div class="col-6">
+			{{ form_row(form.comment, { 'attr': { 'style' : 'width:100%', 'rows' : '4', 'cols' : '300' }} ) }}
+		</div>
+	</div>
 
 </div>
 <div class="modal-footer">

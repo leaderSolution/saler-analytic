@@ -22,7 +22,7 @@ class VisitRepository extends ServiceEntityRepository
     /**
      * @return Visit[] Returns an array of Visit objects
      */
-    public function findVisitsPerDayOfThisWeek($value)
+    public function findVisitsPerDayOfThisWeek($value): array
     {
         return $this->createQueryBuilder('v')
             ->andWhere("DATE_FORMAT(v.startTime, '%Y-%m-%d') = :val")
@@ -37,7 +37,7 @@ class VisitRepository extends ServiceEntityRepository
     /**
       * @return Visit[] Returns an array of Visit objects
       */
-    public function findVisitsPerMonthOfThisYear($value)
+    public function findVisitsPerMonthOfThisYear($value): array
     {
         return $this->createQueryBuilder('v')
             ->andWhere("DATE_FORMAT(v.startTime, '%Y-%m') = :val")
@@ -51,7 +51,7 @@ class VisitRepository extends ServiceEntityRepository
     /**
     * @return Visit[] Returns an array of Visit objects
     */
-    public function findNewVisits($value)
+    public function findNewVisits($value): array
     {
         return $this->createQueryBuilder('v')
               ->andWhere("DATE_FORMAT(v.startTime, '%Y-%m-%d') = :val")
@@ -60,6 +60,68 @@ class VisitRepository extends ServiceEntityRepository
               ->getQuery()
               ->getResult()
           ;
+    }
+
+    /**
+     * @return Visit[] Returns an array of Visit objects
+     */
+    public function findSellerVisitsByClient($sellerID): array
+    {
+        return $this->createQueryBuilder('v')
+            ->select('COUNT(v) as nbVisits, IDENTITY(v.client) as idC')
+            ->andWhere("v.user = :idS")
+            ->setParameter('idS', $sellerID)
+            ->groupBy('v.client')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+    /**
+     * @return Visit[] Returns an array of Visit objects
+     */
+    public function findSellerNewVisits($value, $seller): array
+    {
+        return $this->createQueryBuilder('v')
+            ->andWhere("DATE_FORMAT(v.startTime, '%Y-%m-%d') = :val")
+            ->andWhere("v.user = :idC")
+            ->setParameter('val', $value)
+            ->setParameter('idC', $seller)
+            ->orderBy('v.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+    /**
+     * @return Visit[] Returns an array of Visit objects
+     */
+    public function findSellerComingUpVisits($value, $seller): array
+    {
+        return $this->createQueryBuilder('v')
+            ->andWhere("DATE_FORMAT(v.startTime, '%Y-%m-%d') > :val")
+            ->andWhere("v.user = :idC")
+            ->setParameter('val', $value)
+            ->setParameter('idC', $seller)
+            ->orderBy('v.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+    /**
+     * @return Visit[] Returns an array of Visit objects
+     */
+    public function findSellerDoneVisits($seller): array
+    {
+        return $this->createQueryBuilder('v')
+            ->andWhere("v.isDone = 1")
+            ->andWhere("v.user = :idC")
+            ->setParameter('idC', $seller)
+            ->orderBy('v.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+            ;
     }
 
     /*
@@ -73,4 +135,17 @@ class VisitRepository extends ServiceEntityRepository
         ;
     }
     */
+    public function findSellerVisitsPerDayOfThisWeek(mixed $value, $user)
+    {
+        return $this->createQueryBuilder('v')
+            ->andWhere("DATE_FORMAT(v.startTime, '%Y-%m-%d') = :val")
+            ->andWhere('v.user = :idS')
+            ->setParameter('val', $value)
+            ->setParameter('idS', $user)
+            ->orderBy('v.id', 'ASC')
+            //->setMaxResults(10)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
 }

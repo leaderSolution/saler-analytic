@@ -23,9 +23,17 @@
                     <td>{{ v.startTime|date('d/m/Y H:i')}}</td>
                     <td>{{ v.endTime|date('d/m/Y H:i')}}</td>
                     <td>{{ v.client.email }}</td>
-                    <td><a href="{{ path('visit_edit', {'id': v.id })}}">
-						<i class="fs-5 bi-pencil-square"></i>
-					</a></td>
+                    <td>
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            <a  href="{{ path('visit_edit', {'id': v.id })}}">
+                                <i class="fs-5 bi-pencil-square"></i>
+                            </a>
+                            <a href="#">
+                                <i id="{{v.id}}" style="color: red; margin-left: 50%" class="deleteVisit fs-5 bi bi-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+
                 </tr>
             {% endfor %}
         </tbody>

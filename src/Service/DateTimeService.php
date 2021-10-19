@@ -42,7 +42,8 @@ class DateTimeService
     }
 
     // The amount of visits per day during This week
-    public function numVisitsPerDayOfThisWeek(VisitRepository $visitRepo){
+    public function numVisitsPerDayOfThisWeek(VisitRepository $visitRepo): array
+    {
 
         $visits = [];
         $daysOfThisWeek = $this->daysOfThisWeek();
@@ -53,8 +54,23 @@ class DateTimeService
 
     }
 
+
+    // The amount of seller's visits per day during This week
+    public function numSellerVisitsPerDayOfThisWeek(VisitRepository $visitRepo, User $user): array
+    {
+
+        $visits = [];
+        $daysOfThisWeek = $this->daysOfThisWeek();
+        foreach ($daysOfThisWeek as $key => $value) {
+            $visits [] = count($visitRepo->findSellerVisitsPerDayOfThisWeek($value, $user));
+        }
+        return $visits;
+
+    }
+
      // The amount of visits per month during This year
-     public function numVisitsPerMonthOfThisYear(VisitRepository $visitRepo){
+     public function numVisitsPerMonthOfThisYear(VisitRepository $visitRepo): array
+     {
 
         $visits = [];
         $monthsOfThisYear = $this->monthsOfThisYear();
@@ -66,7 +82,8 @@ class DateTimeService
     }
 
     // The amount of new visits
-    public function amountOfNewVisits(VisitRepository $visitRepo){
+    public function amountOfNewVisits(VisitRepository $visitRepo): float|int
+    {
 
         $d = new \DateTime('now');
         $nb = count($visitRepo->findNewVisits($d->format('Y-m-d')));

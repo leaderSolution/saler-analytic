@@ -59,10 +59,22 @@ class Client
      */
     private $createdAt;
 
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $designation;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Goal::class, mappedBy="client", orphanRemoval=true, cascade={"persist"})
+     */
+    private $goals;
+
     
     public function __construct()
     {
         $this->visits = new ArrayCollection();
+        $this->goals = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -137,6 +149,49 @@ class Client
     public function setCreatedAt(?\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+
+    public function getDesignation(): ?string
+    {
+        return $this->designation;
+    }
+
+    public function setDesignation(?string $designation): self
+    {
+        $this->designation = $designation;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Goals[]
+     */
+    public function getGoals(): Collection
+    {
+        return $this->goals;
+    }
+
+    public function addGoal(Goal $goal): self
+    {
+        if (!$this->goals->contains($goal)) {
+            $this->goals[] = $goal;
+            $goal->setClient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGoal(Goal $goal): self
+    {
+        if ($this->goals->removeElement($goal)) {
+            // set the owning side to null (unless already changed)
+            if ($goal->getClient() === $this) {
+                $goal->setClient(null);
+            }
+        }
 
         return $this;
     }

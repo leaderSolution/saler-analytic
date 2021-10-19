@@ -34,7 +34,7 @@ class VisitController extends AbstractController
     #[Route('/visits/', name: 'all_visits', methods: ['GET', 'POST'])]
     public function allVisits(Request $request, VisitRepository $visitRep): Response
     {
-        return $this->renderForm('user/visits.html.twig', [
+        return $this->renderForm('supervisor/visits.html.twig', [
             'visits' => $visitRep->findAll(),
         ]);
     }
@@ -85,7 +85,7 @@ class VisitController extends AbstractController
         ]);
 
         //
-        return $this->render('dashboard/index.html.twig', [
+        return $this->render('dashboard/all_clients.html.twig', [
             'chart' => $chart,
             'chartMonth' => $chartMonth,
             'totalVisits' => count($visitRep->findAll()),
