@@ -12,6 +12,11 @@
     <body>
 
        {% block body %}{% endblock %}
+       <footer class="footer mt-auto py-3 bg-light">
+           <div class="container">
+               <span class="text-muted">Place sticky footer content here.</span>
+           </div>
+       </footer>
        {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
             {# <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.jquery.min.js"></script> #}

@@ -23,7 +23,7 @@
                                         <h3 class="primary">{{ nbVisits }} %</h3>
                                         <span>Daily new Visits </span>
                                     </div>
-                                    <div class="blink_me  align-self-center">
+                                    <div class="align-self-center">
                                         <i class="fs-1 bi bi-bookmark-star"></i>
                                     </div>
                                 </div>
@@ -114,7 +114,7 @@
                                     <div class="align-self-center">
                                         <i class="icon-pencil primary font-large-2 mr-2"></i>
                                     </div>
-                                    {% if is_granted('ROLE_ADMIN') %}
+                                    {% if is_granted('ROLE_USER') %}
                                         <div class="media-body">
                                             <h4>Total Visits</h4>
                                             <span>Amount of Visits per day this week</span>
@@ -137,7 +137,7 @@
                                     <div class="align-self-center">
                                         <i class="icon-speech warning font-large-2 mr-2"></i>
                                     </div>
-                                    {% if is_granted('ROLE_ADMIN') %}
+                                    {% if is_granted('ROLE_USER') %}
                                         <div class="media-body">
                                             <h4>Total Visits</h4>
                                             <span>Amount of Visits per Month on {{ 'now' | date('Y') }}</span>
@@ -160,14 +160,14 @@
                             <div class="card-body cleartfix">
                                 <div class="media align-items-stretch">
                                     <div class="align-self-center">
-                                        <h4>Recent Sellers</h4>
+                                        <h4>Recent Visits</h4>
                                     </div>
                                     <ul class="list-group">
-                                        {% if sellers is not empty %}
-                                            {% for s in sellers %}
+                                        {% if visits is not empty %}
+                                            {% for v in visits %}
                                                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                    {{ s.email }}
-                                                    <span class="badge bg-primary rounded-pill">{{ s.visits |length }} visits</span>
+                                                    {{ v.title }}
+                                                    <span class="badge bg-info rounded-pill">{{ v.startTime |date('g:i a') }} </span>
                                                 </li>
                                             {% endfor %}
                                         {% else %}

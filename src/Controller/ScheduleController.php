@@ -50,7 +50,7 @@ class ScheduleController extends AbstractController
                 'clients' => $clients,
             ]);
         }
-        $template = $request->isXmlHttpRequest() ? '_form.html.twig' : 'all_clients.html.twig';
+        $template = $request->isXmlHttpRequest() ? '_form.html.twig' : 'index.html.twig';
 
         return $this->render('schedule/' . $template, [
             'form' => $form->createView(),'searchTerm' => $searchTerm

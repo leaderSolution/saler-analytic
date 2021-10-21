@@ -1,5 +1,21 @@
 $primary: #5f76e8;
+.blink_me {
 
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+    color: red;
+  }
+}
+.float-right {
+  float: right !important;
+}
+.success {
+  color: green;
+}
 .bd-placeholder-img {
     font-size: 1.125rem;
     text-anchor: middle;

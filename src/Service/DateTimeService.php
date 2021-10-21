@@ -81,6 +81,21 @@ class DateTimeService
 
     }
 
+
+    // The amount of visits per month during This year
+    public function numSellerVisitsPerMonthOfThisYear(VisitRepository $visitRepo, User $user): array
+    {
+
+        $visits = [];
+        $monthsOfThisYear = $this->monthsOfThisYear();
+        foreach ($monthsOfThisYear as $key => $value) {
+            $visits [] = count($visitRepo->findSellerVisitsPerMonthOfThisYear($value, $user));
+        }
+        return $visits;
+
+    }
+
+
     // The amount of new visits
     public function amountOfNewVisits(VisitRepository $visitRepo): float|int
     {
@@ -92,16 +107,17 @@ class DateTimeService
 
         if(0 !== $total ){
 
-            $pourcentage = round(( $nb / $total) * 100, 2);
+            $percentage = round(( $nb / $total) * 100, 2);
         }else {
-            $pourcentage = 0;
+            $percentage = 0;
         }
 
-       return $pourcentage;
+       return $percentage;
     }
 
     // The amount of new Clients
-    public function amountOfNewClients(ClientRepository $clientRepo){
+    public function amountOfNewClients(ClientRepository $clientRepo): float|int
+    {
 
         $d = new \DateTime('now');
         $nb = count($clientRepo->findNewClients($d->format('Y-m-d')));
@@ -110,11 +126,11 @@ class DateTimeService
 
         if(0 !== $total ){
 
-            $pourcentage = round(( $nb / $total) * 100, 2);
+            $percentage = round(( $nb / $total) * 100, 2);
         }else {
-            $pourcentage = 0;
+            $percentage = 0;
         }
 
-        return $pourcentage;
+        return $percentage;
     }
 }

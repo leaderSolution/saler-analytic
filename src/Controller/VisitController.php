@@ -2,7 +2,10 @@
 
 namespace App\Controller;
 
+use App\Repository\ClientRepository;
+use App\Repository\UserRepository;
 use App\Repository\VisitRepository;
+use App\Service\ChartService;
 use App\Service\DateTimeService;
 use Symfony\UX\Chartjs\Model\Chart;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,6 +18,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 #[ IsGranted("ROLE_ADMIN"), Route('/admin') ]
 class VisitController extends AbstractController
 {
+
+    public function __construct(private ChartService $chartService)
+    {
+    }
+
     #[Route('/verify-visit', name: 'verify_visit', methods: ['POST'])]
     public function verifyVisit(Request $request, VisitRepository $visitRep): Response
     {
@@ -40,55 +48,34 @@ class VisitController extends AbstractController
     }
 
     #[Route('/', name:'admin_dashboard', methods: ['GET', 'POST'] )]
-    public function visitsBySalesUser(VisitRepository $visitRep, ChartBuilderInterface $chartBuilder, DateTimeService $dateTimeService): Response
+    public function visitsBySalesUser(UserRepository $userRepo,VisitRepository $visitRep,ClientRepository $clientRepo, DateTimeService $dateTimeService): Response
     {
-        $chart = $chartBuilder->createChart(Chart::TYPE_BAR);
-        // The amount of sale's user visit per day of current week
-        //dd($dateTimeService-> monthsOfThisYear());
-        $chart->setData([
-            'labels' => ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'],
-            'datasets' => [
-                [
-                    'label' => 'Amount of visits',
-                    'backgroundColor' => 'rgb(255, 99, 132)',
-                    'borderColor' => 'rgb(255, 99, 132)',
-                    'data' => $dateTimeService->numVisitsPerDayOfThisWeek($visitRep),
-                ],
-            ],
-        ]);
-        $chart->setOptions([
-            'scales' => [
-                'yAxes' => [
-                    ['ticks' => ['min' => 0, 'max' => 25]],
-                ],
-            ],
-        ]);
-        // Chart amount visits by month of current Year
-        $chartMonth = $chartBuilder->createChart(Chart::TYPE_BAR_HORIZONTAL);
-        $chartMonth->setData([
-            'labels' => ['Jan', 'Fev', 'Mar', 'Avr', 'Mai', 'Jun', 'Jui', 'aout','Sep', 'Oct', 'Nov', 'Dec'],
-            'datasets' => [
-                [
-                    'label' => 'Amount of visits',
-                    'backgroundColor' => 'rgb(255,165,0)',
-                    'borderColor' => 'rgb(255,165,0)',
-                    'data' => $dateTimeService->numVisitsPerMonthOfThisYear($visitRep),
-                ],
-            ],
-        ]);
-        $chartMonth->setOptions([
-            'scales' => [
-                'yAxes' => [
-                    ['ticks' => ['min' => 0, 'max' => 25]],
-                ],
-            ],
-        ]);
+        // The amount of done visits
+        $nbDoneVisits = count($visitRep->findBy(['isDone' => true]));
+        $sellers = $userRepo->findBy(['isActive' => true], ['id' =>'DESC']);
+        $clients = $clientRepo->findBy([],['id'=>'DESC'], 5, 0);
 
-        //
-        return $this->render('dashboard/all_clients.html.twig', [
+        // The amount of sale's user visit per day of current week
+        $chart = $this->chartService->buildChart(Chart::TYPE_BAR,
+            $this->chartService::DAYS,
+            'Amount of visits',
+            'rgb(255, 99, 132)',
+            $dateTimeService->numVisitsPerDayOfThisWeek($visitRep));
+        // Chart amount visits by month of current Year
+        $chartMonth = $this->chartService->buildChart(Chart::TYPE_BAR_HORIZONTAL,
+            $this->chartService::MONTHS,
+            'Amount of visits',
+            'rgb(244,164,96)',
+            $dateTimeService->numVisitsPerMonthOfThisYear($visitRep));
+
+        return $this->render('supervisor/dashboard.html.twig', [
             'chart' => $chart,
             'chartMonth' => $chartMonth,
+            'nbDoneVisits' => $nbDoneVisits,
             'totalVisits' => count($visitRep->findAll()),
+            'totalClients' =>count($clientRepo->findAll()),
+            'sellers' =>$sellers,
+            'clients' =>$clients,
             'nbVisits' => $dateTimeService->amountOfNewVisits($visitRep),
         ]);
     }
