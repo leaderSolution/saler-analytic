@@ -8,6 +8,7 @@ use App\Repository\ClientRepository;
 use App\Repository\UserRepository;
 use App\Repository\VisitRepository;
 use App\Service\DateTimeService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -26,8 +27,9 @@ class UserController extends AbstractController
 
     /***
      * @param DateTimeService $dateTimeService
+     * @param EntityManagerInterface $em
      */
-    public function __construct(private DateTimeService $dateTimeService)
+    public function __construct(private DateTimeService $dateTimeService, private EntityManagerInterface $em)
     {
     }
 
@@ -81,14 +83,15 @@ class UserController extends AbstractController
     public function edit(Request $request, User $user, UserPasswordHasherInterface $hasher): Response
     {
         $form = $this->createForm(UserType::class, $user);
+        $form->remove('password');
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Check if the password is inserted
-            if(null !== $form->getData()->getPassword()){
+            /*if(null !== $form->getData()->getPassword()){
                 $password = $hasher->hashPassword($user, $form->getData()->getPassword());
                 $user->setPassword($password);
-            }
+            }*/
 
             $this->getDoctrine()->getManager()->flush();
 
@@ -172,6 +175,25 @@ class UserController extends AbstractController
     {
         return $this->render('dashboard.html.twig', [
             'users' => $userRep->findAll(),
+        ]);
+    }
+    #[Route('/profile/{id}', name: 'profile', methods: ['POST','GET'])]
+    public function profile(Request $request, User $user, ClientRepository $clientRepository): Response
+    {
+        $clients = $clientRepository->findBy([],['id'=>'DESC'], 4, 0);
+        $form = $this->createForm(UserType::class, $user);
+        $form->remove('isActive');
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()){
+
+            $this->em->flush();
+            return $this->redirectToRoute('profile', ['id' =>$user->getId()], Response::HTTP_SEE_OTHER);
+        }
+        return $this->render('profile/index.html.twig', [
+            'form' => $form->createView(),
+            'user' => $user,
+            'clients' => $clients,
+            'allClients' => count($clientRepository->findAll()),
         ]);
     }
 

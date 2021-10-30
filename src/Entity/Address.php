@@ -20,8 +20,13 @@ class Address
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id;
 
+    /**
+     * @ORM\Column(type="string", length=55)
+     */
+    #[Assert\NotBlank]
+    private $fullAddress;
     /**
      * @ORM\Column(type="string", length=55)
      */
@@ -174,5 +179,21 @@ class Address
         }
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFullAddress()
+    {
+        return $this->fullAddress;
+    }
+
+    /**
+     * @param mixed $fullAddress
+     */
+    public function setFullAddress($fullAddress): void
+    {
+        $this->fullAddress = $fullAddress;
     }
 }

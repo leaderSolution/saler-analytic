@@ -5,7 +5,7 @@
 
 {% block content %}
 {% include "top-bar.html.twig" with {'title':'Clients','btn':''} %}
-	<div class="card">
+	<div class="card" xmlns="http://www.w3.org/1999/html">
 		<div class="card-header" style="text-align: right">
 			{% set minYear = "now" |date_modify('-4 year') | date('Y')%}
 			<select name="years" id="years">
@@ -21,6 +21,27 @@
 	</div>
 	<hr>
 	<div class="card">
+		<div class="card-header">
+			<h4>Import Seller's clients</h4>
+		</div>
+		<div class="card-body">
+
+			<form id="csvForm" action="{{ path('import_csv') }}" method="post" enctype="multipart/form-data">
+				<input type="hidden" name="token" value="{{ csrf_token('upload') }}" />
+				<div class="input-group mb-3">
+					<input id="csvFile" name="csvFile" type="file" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="button-addon2">
+					<button class="btn btn-primary" type="submit" id="button-addon2"><i class="bi bi-upload"></i> Upload</button>
+				</div>
+
+			</form>
+		</div>
+
+	</div>
+	<hr>
+	<div class="card">
+		<div class="card-header">
+
+	    </div>
 		<div class="card-body" data-reload-content-target="content">
 			<table id="example" class="table">
 				<thead>
@@ -72,5 +93,18 @@
 {% block javascripts %}
 	{{ parent() }}
 	{{ encore_entry_script_tags('highcharts') }}
+	<script>
+		async function uploadFile() {
+			let formData = new FormData();
+			let fileUpload = document.getElementById('csvFile');
+			formData.append("csvFile", fileUpload.files[0]);
+			await fetch('/admin/client/import-csv', {
+				method: "POST",
+				body: formData
+			}).then(response => response.json())
+			  .then(data => console.log(data));
+			alert('The file has been uploaded successfully.');
+		}
+	</script>
 
 {% endblock %}

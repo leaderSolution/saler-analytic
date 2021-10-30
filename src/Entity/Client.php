@@ -70,6 +70,36 @@ class Client
      */
     private $goals;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="clients")
+     */
+    private $user;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $region;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $taxRegistrationNum;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $deadline;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $turnover;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $isProspect;
+
     
     public function __construct()
     {
@@ -192,6 +222,78 @@ class Client
                 $goal->setClient(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getRegion(): ?string
+    {
+        return $this->region;
+    }
+
+    public function setRegion(?string $region): self
+    {
+        $this->region = $region;
+
+        return $this;
+    }
+
+    public function getTaxRegistrationNum(): ?string
+    {
+        return $this->taxRegistrationNum;
+    }
+
+    public function setTaxRegistrationNum(?string $taxRegistrationNum): self
+    {
+        $this->taxRegistrationNum = $taxRegistrationNum;
+
+        return $this;
+    }
+
+    public function getDeadline(): ?int
+    {
+        return $this->deadline;
+    }
+
+    public function setDeadline(?int $deadline): self
+    {
+        $this->deadline = $deadline;
+
+        return $this;
+    }
+
+    public function getTurnover(): ?float
+    {
+        return $this->turnover;
+    }
+
+    public function setTurnover(?float $turnover): self
+    {
+        $this->turnover = $turnover;
+
+        return $this;
+    }
+
+    public function getIsProspect(): ?bool
+    {
+        return $this->isProspect;
+    }
+
+    public function setIsProspect(?bool $isProspect): self
+    {
+        $this->isProspect = $isProspect;
 
         return $this;
     }

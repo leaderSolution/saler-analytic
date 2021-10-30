@@ -8,7 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 
-class EmailToClientTransformer implements DataTransformerInterface
+class CodeUniqToClientTransformer implements DataTransformerInterface
 {
     public function __construct(private ClientRepository $clientRepo, private EntityManagerInterface $em)
     {}
@@ -20,17 +20,19 @@ class EmailToClientTransformer implements DataTransformerInterface
         if (!$value instanceof Client) {
             throw new \LogicException('The clientSelectTextType can only be used with client objects');
         }
-        return $value->getEmail();
+        return $value->getCodeUniq();
     }
 
     public function reverseTransform($value)
     {
-        $client = $this->clientRepo->findOneBy(['email' => $value]);
+        $client = $this->clientRepo->findOneBy(['designation' => $value]);
         if (!$client) {
             //throw new TransformationFailedException(sprintf('No client found with email "%s"', $value));
             $client = new Client();
             $client->setCodeUniq(rand(1000, 99999));
-            $client->setEmail($value);
+            $client->setDesignation($value);
+            $client->setIsProspect(true);
+            //$client->setEmail($value);
             $this->em->persist($client);
             $this->em->flush();
 

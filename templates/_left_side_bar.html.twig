@@ -1,38 +1,30 @@
 <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
 	<ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start">
+		<li class="margin-start" style="color: rgba(27,27,27,0.91); text-align: center; font-weight: bold">
+			{% set image = '<img src="https://picsum.photos/100/100" alt="{{ app.user.fullName }}" width="100" height="100" class="img-fluid img-thumbnail rounded-circle">' %}
+			{% if is_granted('ROLE_ADMIN') %}
+				<a href="{{ path('profile', {'id': app.user.id }) }}"> {{ image|raw }}</a>
+			{% else %}
+				<a href="{{ path('profile_user', {'id': app.user.id }) }}">{{ image|raw }}</a>
+			{% endif %}
+			<ul style="list-style-type:none">
+				<li>
+				{% if app.user.fullName is null %}{{ app.user.email }}{% else %}{{ app.user.fullName }} {% endif %}
+				</li>
+				<li>
+					<span class="badge bg-warning">{{ nbClients() }}</span> clients
+				</li>
+			</ul>
+		</li>
 		{% for item in menu %}
 			
 				<li>
 					<a href="{{ item.path }}" class="{{ route == item.route ? 'current' }} nav-link px-0 align-middle">
 						<i class="{{ item.icon }}"></i>
-						<span class="ms-1 d-none d-sm-inline">{{ item.text }}</span>
+						<span class="ms-1 d-none d-sm-inline">{{ item.text|raw }}</span>
 					</a>
 				</li>
-			
 		{% endfor %}
 	</ul>
-	<hr>
-	<div class="dropdown pb-4">
-		<a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-			<img src="https://github.com/mdo.png" alt="hugenerd" width="30" height="30" class="rounded-circle">
-			<span class="d-none d-sm-inline mx-1">{{ app.user.username }}</span>
-		</a>
-		<ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-			<li>
-				<a class="dropdown-item" href="#">New project...</a>
-			</li>
-			<li>
-				<a class="dropdown-item" href="#">Settings</a>
-			</li>
-			<li>
-				<a class="dropdown-item" href="{{ path('profile') }}">Profile</a>
-			</li>
-			<li>
-				<hr class="dropdown-divider">
-			</li>
-			<li>
-				<a class="dropdown-item" href="{{ path('app_logout') }}">Sign out</a>
-			</li>
-		</ul>
-	</div>
+
 </div>

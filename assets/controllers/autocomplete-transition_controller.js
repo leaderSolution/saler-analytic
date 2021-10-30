@@ -11,7 +11,8 @@ export default class extends Controller {
     
     fillInput(e){
         e.preventDefault();
-        this.pickedEmailTarget.value = e.currentTarget.innerText;
+        let innerTextLi = e.currentTarget.innerText
+        this.pickedEmailTarget.value = innerTextLi.substr(0, innerTextLi.indexOf(',')); ;
         document.getElementById('listClt').innerHTML = ''
         
     }

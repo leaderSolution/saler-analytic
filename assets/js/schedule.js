@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
       // Init the calendar
     var calendar = new Calendar(calendarEl, {
         plugins: [ interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin, momentTimezonePlugin ],
+        themeSystem: 'bootstrap',
         headerToolbar: {
           left: 'prev,next today',
           center: 'title',

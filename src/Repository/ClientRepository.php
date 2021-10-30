@@ -24,13 +24,15 @@ class ClientRepository extends ServiceEntityRepository
      *
      * @return Client[]
      */
-    public function search(?string $term)
+    public function search(?string $term, $seller)
     {
         $qb = $this->createQueryBuilder('c');
 
         if ($term) {
-            $qb->andWhere('c.codeUniq LIKE :term OR c.email LIKE :term')
-                ->setParameter('term', '%'.$term.'%');
+            $qb ->andWhere('c.user = :user')
+                ->andWhere('c.codeUniq LIKE :term OR c.designation LIKE :term')
+                ->setParameter('term', '%'.$term.'%')
+                ->setParameter('user', $seller);
         }
 
         return $qb->getQuery()->execute();

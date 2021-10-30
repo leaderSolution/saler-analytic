@@ -2,7 +2,24 @@
 
 {{ form_start(form) }}
 <div class="modal-body">
+	<div class="row">
+		<div
+				class="col">
+			Client
+			<div {{ stimulus_controller({ 'autocomplete': { skipHiddenProperty: true,url: path('schedule', { preview: 1 } ) }, 'autocomplete-transition' : {} }) }} {# data-action="toggle->autocomplete-transition#toggle" 'data-action':"blur->autocomplete-transition#toggle"#}>
+				{{ form_widget(form.client,
+					{'attr': {
+						'data-autocomplete-target': "input",
+						'data-autocomplete-transition-target':"pickedEmail",
 
+					}
+					} ) }}
+				<ul id="listClt" class="list-group" class="search-preview" data-autocomplete-transition-target="results" data-autocomplete-target="results"></ul>
+			</div>
+
+		</div>
+
+	</div>
 	<div class="row">
 		<div class="col-sm-8">
 			{{ form_row(form.title) }}
@@ -30,36 +47,8 @@
 			{{ form_row(form.textColor) }}
 		</div>
 	</div>
-	<div class="row">
-		<div
-			class="col">
-			{# #}
-			Client
-			<div class="input-group" {{ stimulus_controller({ 'autocomplete': { skipHiddenProperty: true,url: path('schedule', { preview: 1 } ) }, 'autocomplete-transition' : {} }) }} {# data-action="toggle->autocomplete-transition#toggle" 'data-action':"blur->autocomplete-transition#toggle"#}>
-				{{ form_widget(form.client, 
-			 	{'attr': {
-					 'data-autocomplete-target': "input",
-					 'data-autocomplete-transition-target':"pickedEmail",
-					 
-					 }
-				} ) }}
-				{# <input name="q" value="{{ searchTerm }}" 
-								       placeholder="Search client..." 
-									   type="search" 
-									   class="form-control" 
-									   data-autocomplete-target="input"
-									   data-autocomplete-transition-target="pickedEmail"
-									   > #}
-				<br>
 
-				<ul id="listClt" class="list-group" class="search-preview" data-autocomplete-transition-target="results" data-autocomplete-target="results"></ul>
-			</div>
-
-		</div>
-		
-	</div>
-	<br>
-	<div class="row">
+	{#<div class="row">
 		<div class="col">
 			{{ form_row(form.address.street) }}
 		</div>
@@ -69,7 +58,7 @@
 		<div class="col">
 			{{ form_row(form.address.city) }}
 		</div>
-	</div>
+	</div>#}
 	<br>
 	<div class="row">
 		<div class="form-check form-switch">

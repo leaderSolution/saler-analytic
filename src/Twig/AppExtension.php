@@ -12,6 +12,8 @@ class AppExtension extends AbstractExtension
     {
         return [
             new TwigFunction('notifications', [AppRuntime::class, 'sellerNotification']),
+            new TwigFunction('nbClients', [AppRuntime::class, 'sellerNbClients']),
+            new TwigFunction('lastWeekOfYear', [AppRuntime::class, 'lastWeekOfYear']),
         ];
     }
 

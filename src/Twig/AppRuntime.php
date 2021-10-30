@@ -3,6 +3,7 @@
 namespace App\Twig;
 
 use App\Repository\VisitRepository;
+use DateTime;
 use Symfony\Component\Security\Core\Security;
 use Twig\Extension\RuntimeExtensionInterface;
 
@@ -25,5 +26,22 @@ class AppRuntime implements RuntimeExtensionInterface
     {
         $now = new \DateTime('now');
         return $this->visitRepo->findSellerUnvisitedClient($now->format('Y-m-d H:i'), $this->security->getUser());
+    }
+
+    /**
+     * @return int|null
+     */
+    public function sellerNbClients(): int
+    {
+        $clients = $this->security->getUser()->getClients();
+
+        return count($clients);
+    }
+
+    function lastWeekOfYear($year): int
+    {
+        $date = new DateTime;
+        $date->setISODate($year, 53);
+        return ($date->format("W") === "53" ? 53 : 52);
     }
 }

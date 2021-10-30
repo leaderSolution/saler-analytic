@@ -39,7 +39,10 @@ class VisitType extends AbstractType
                     'Assistance' => 1,
                     'Delivery' => 2,
                     'Recovery' => 3,
-                    'Other' => 4
+                    'Administrative' => 4,
+                    'Commercial' => 5,
+                    'Other' => 6,
+
                 ],
             ])
             ->add('comment')
@@ -50,7 +53,7 @@ class VisitType extends AbstractType
             ->add('textColor', ColorType::class)
             ->add('allDay', CheckboxType::class, ['attr' => ['class' => 'form-check-input']])
             ->add('client', ClientSelectTextType::class)
-            ->add('address', AddressType::class, [])
+            //->add('address', AddressType::class, [])
             ;
         ;
     }

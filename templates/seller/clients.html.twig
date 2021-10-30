@@ -1,0 +1,40 @@
+{% extends 'dashboard.html.twig' %}
+
+{% block title %}Client index
+{% endblock %}
+
+{% block content %}
+{% include "top-bar.html.twig" with {'title':'Clients','btn':''} %}
+	<div class="card">
+		<div class="card-body" data-reload-content-target="content">
+			<table id="example" class="table">
+				<thead>
+					<tr>
+						<th>CodeUniq</th>
+						<th>Designation </th>
+						<th>Region</th>
+						<th>Seller</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for client in clients %}
+						<tr>
+							<td>{{ client.codeUniq }}</td>
+							<td>
+								{{ client.designation }}
+							</td>
+							<td>{{ client.region }}</td>
+							<td>{{ client.user.fullName }}</td>
+
+						</tr>
+					{% else %}
+						<tr>
+							<td colspan="4">no records found</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	
+{% endblock %}

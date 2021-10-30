@@ -7,6 +7,7 @@ use App\Entity\Visit;
 use App\Form\VisitType;
 use App\Repository\ClientRepository;
 use App\Repository\VisitRepository;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -43,7 +44,7 @@ class ScheduleController extends AbstractController
         $searchTerm = $request->query->get('q');
 
         
-        $clients = $clientRepository->search($searchTerm);
+        $clients = $clientRepository->search($searchTerm, $this->getUser());
 
         if ($request->query->get('preview')) {
             return $this->render('client/_searchPreview.html.twig', [
@@ -121,13 +122,6 @@ class ScheduleController extends AbstractController
         return  new JsonResponse($isDone);
     }
 
-    #[Route('/profile', name: 'profile')]
-    public function profile(): Response
-    {
-        return $this->render('profile/all_clients.html.twig');
-    }
-
-
     #[Route('/visits', name: 'visit_index', methods: ['GET', 'POST'])]
     public function visits(VisitRepository $v): Response
     {
@@ -144,6 +138,10 @@ class ScheduleController extends AbstractController
     public function editVisit(Request $request, Visit $visit): Response
     {
         $form = $this->createForm(VisitType::class, $visit);
+        $form->add('isDone',CheckboxType::class, [
+            'label'    => 'Completed ?',
+            'required' => false,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -156,6 +154,17 @@ class ScheduleController extends AbstractController
             'visit' => $visit,
             'form' => $form,
         ]);
+    }
+
+    #[Route('/clients', name: 'seller_clients', methods: ['GET', 'POST'])]
+    public function sellerClients(ClientRepository $clientRepository): Response
+    {
+        $clients = null;
+        if ($this->getUser()) {
+            $clients = $clientRepository->findBy(['user' => $this->getUser()]);
+        }
+
+        return $this->render('seller/clients.html.twig', ['clients' => $clients ]);
     }
 
 

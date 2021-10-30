@@ -15,6 +15,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Validator\Constraints\Valid;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -78,10 +79,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $visits;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @var string
      */
     private $fullName;
 
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $firstname;
+    /**
+     * @var string|null
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $lastname;
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -97,9 +108,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $isActive;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Address::class, inversedBy="visits", cascade={"persist"})
+     */
+    #[ Valid() ]
+    private $address;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $nbVisitsDay;
+
+
+    /**
+     * @ORM\OneToMany(targetEntity=Client::class, mappedBy="user")
+     */
+    private $clients;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $turnoverTarget;
+
     public function __construct()
     {
         $this->visits = new ArrayCollection();
+        $this->clients = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -112,6 +146,38 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->id = $id;
 
         return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getFirstname(): ?string
+    {
+        return $this->firstname;
+    }
+
+    /**
+     * @param string $firstname
+     */
+    public function setFirstname(string $firstname): void
+    {
+        $this->firstname = $firstname;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getLastname(): ?string
+    {
+        return $this->lastname;
+    }
+
+    /**
+     * @param string $lastname
+     */
+    public function setLastname(string $lastname): void
+    {
+        $this->lastname = $lastname;
     }
 
     public function getEmail(): ?string
@@ -230,12 +296,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getFullName(): ?string
     {
-        return $this->fullName;
+        return  $this->getFirstname().' '.$this->getLastname();
     }
 
-    public function setFullName(?string $fullName): self
+    public function setFullName(): self
     {
-        $this->fullName = $fullName;
+        $this->fullName = $this->getFirstname().' '.$this->getLastname();
 
         return $this;
     }
@@ -272,6 +338,78 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsActive(?bool $isActive): self
     {
         $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    /**
+     * @return Address|null
+     */
+    public function getAddress(): ?Address
+    {
+        return $this->address;
+    }
+
+    /**
+     * @param Address|null $address
+     * @return User
+     */
+    public function setAddress(?Address $address): self
+    {
+        $this->address = $address;
+        return $this;
+    }
+
+    public function getNbVisitsDay(): ?int
+    {
+        return $this->nbVisitsDay;
+    }
+
+    public function setNbVisitsDay(?int $nbVisitsDay): self
+    {
+        $this->nbVisitsDay = $nbVisitsDay;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Client[]
+     */
+    public function getClients(): Collection
+    {
+        return $this->clients;
+    }
+
+    public function addClient(Client $client): self
+    {
+        if (!$this->clients->contains($client)) {
+            $this->clients[] = $client;
+            $client->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeClient(Client $client): self
+    {
+        if ($this->clients->removeElement($client)) {
+            // set the owning side to null (unless already changed)
+            if ($client->getUser() === $this) {
+                $client->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getTurnoverTarget(): ?float
+    {
+        return $this->turnoverTarget;
+    }
+
+    public function setTurnoverTarget(?float $turnoverTarget): self
+    {
+        $this->turnoverTarget = $turnoverTarget;
 
         return $this;
     }

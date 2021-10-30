@@ -19,3 +19,5 @@ doctrine:
         dql:
             datetime_functions:
                 DATE_FORMAT: App\DQL\DateFormatFunction
+            numeric_functions:
+                quarter: DoctrineExtensions\Query\Mysql\Quarter

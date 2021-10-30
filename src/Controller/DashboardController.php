@@ -2,10 +2,16 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
+use App\Form\UserType;
+use App\Repository\ClientRepository;
 use App\Repository\VisitRepository;
 use App\Service\ChartService;
 use App\Service\DateTimeService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\UX\Chartjs\Model\Chart;
@@ -14,7 +20,7 @@ class DashboardController extends AbstractController
 {
 
 
-    public function __construct(private DateTimeService $timeService, private ChartService $chartService)
+    public function __construct(private DateTimeService $timeService, private EntityManagerInterface $em ,private ChartService $chartService)
     {
     }
 
@@ -63,12 +69,38 @@ class DashboardController extends AbstractController
 
         ]);
     }
+    #[Route('/profile/{id}', name: 'profile_user', methods: ['POST','GET'])]
+    public function profile(Request $request, User $user, ClientRepository $clientRepository): Response
+    {
+        $clients = $clientRepository->findAll();
+        $form = $this->createForm(UserType::class, $user);
+        $form->remove('isActive');
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()){
 
-    // #[Route('/admin', name: 'admin_dashboard')]
-    // public function adminDashboard(): Response
-    // {
-    //     return $this->render('dashboard/all_clients.html.twig', [
-    //         'controller_name' => 'DashboardController',
-    //     ]);
-    // }
+            $this->em->flush();
+            return $this->redirectToRoute('profile_user', ['id' =>$user->getId()], Response::HTTP_SEE_OTHER);
+        }
+        return $this->render('profile/index.html.twig', [
+            'form' => $form->createView(),
+            'user' => $user,
+            'clients' => $clients,
+            'allClients' => count($clientRepository->findAll()),
+        ]);
+    }
+
+     #[Route('/last-num-week', name: 'last_num_week')]
+     public function lastNumWeek(Request $request): JsonResponse
+     {
+         $current = new \DateTime('now');
+         $currentYear = $current->format('Y');
+         $currentWeek = $current->format('W');
+         if(null === $request->get('year')){
+             $number = $this->timeService->getIsoWeeksInYear($currentYear);
+         }else {
+             $number = $this->timeService->getIsoWeeksInYear($request->get('year'));
+         }
+
+         return new JsonResponse(['lastWeek' => $number, 'thisWeek' =>$currentWeek]);
+     }
 }

@@ -4,7 +4,8 @@
 {% endblock %}
 
 {% block content %}
-	<h1>Edit Visit</h1>
+
+	{% include "top-bar.html.twig" with {'title':'Visit Details','btn':''} %}
 {{ form_start(form) }}
   	<div class="card">
 		<div class="card-body">
@@ -49,14 +50,16 @@
 							{{ form_widget(form.allDay) }}
 						</div>
 					</div>
+					<div class="row">
 
+						<div class="col">
+							{{ form_row(form.isDone) }}
+						</div>
+					</div>
 				</div>
 				<div class="col">
 					  <label>Vise-à-vis du client </label>
 					  	{{ form_widget(form.client) }}
-					<br>
-                      <label>Addresse </label>
-					  	{{ form_widget(form.address) }}
 				</div>
 				
 			</div>
