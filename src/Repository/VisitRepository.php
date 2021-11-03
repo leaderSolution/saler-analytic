@@ -162,6 +162,19 @@ class VisitRepository extends ServiceEntityRepository
             ;
     }
 
+    public function findSellerVisitsOfTheMonth(mixed $value, $user)
+    {
+        return $this->createQueryBuilder('v')
+            ->andWhere("DATE_FORMAT(v.startTime, '%Y-%m-%d') = :val")
+            ->andWhere('v.user = :idS')
+            ->setParameter('val', $value)
+            ->setParameter('idS', $user)
+            ->orderBy('v.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
     public function findSellerUnvisitedClient(mixed $value, $user)
     {
         return $this->createQueryBuilder('v')
@@ -169,6 +182,20 @@ class VisitRepository extends ServiceEntityRepository
             ->andWhere('v.user = :idS')
             ->andWhere('v.isDone = 0')
             ->setParameter('val', $value)
+            ->setParameter('idS', $user)
+            ->orderBy('v.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+    public function findSellerVisitsByQuarter(mixed $start, mixed $end, $user)
+    {
+        return $this->createQueryBuilder('v')
+            ->andWhere("DATE_FORMAT(v.startTime, '%Y-%m-%d') between :start and :end")
+            ->andWhere('v.user = :idS')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
             ->setParameter('idS', $user)
             ->orderBy('v.id', 'ASC')
             ->getQuery()

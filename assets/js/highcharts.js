@@ -13,17 +13,19 @@ function calculateProgressBar(total, target, idP, idTotal, idTarget) {
         progressBarWidth = 100
     }
 
-    $('#'+idP).css('width',progressBarWidth+'%')
+    $('#'+idP).css({'width': progressBarWidth+'%', 'color':'black', 'font-weight': 'bold'})
     $('#'+idP).attr('aria-valuenow', total)
     $('#'+idP).attr('aria-valuemin', '0')
     $('#'+idP).attr('aria-valuemax', target)
-    $('#'+idP).text(progressBarWidth+"%")
+    $('#'+idP).text(Math.round(progressBarWidth)+"%")
 }
 
 document.addEventListener('DOMContentLoaded', function () {
     let BASE_URI = '/admin/client/show-chart-goal-clients';
     let URI_SELLER_WEEK = '/seller/visits-week'
     let URI_SELLER_MONTH = '/seller/visits-month'
+    let URI_SELLER_OF_MONTH = '/seller/visits-of-the-month'
+    let URI_SELLER_QUARTER = '/seller/visits-quarter'
     let URL_LAST_WEEK = '/last-num-week'
     const d = new Date();
     let year = d.getFullYear();
@@ -109,13 +111,18 @@ document.addEventListener('DOMContentLoaded', function () {
      * THE SELLER DASHBOARD
      */
     // The initialization of both week select and the current Year
-    $('.selectedYear').text(year)
+    $('#selectedYear').text(year)
+    $('#selectedMYear').text(year)
     getTheWeekOfYear(year)
 
     $('#yearFilter').change(e => {
         e.preventDefault()
-        $('.selectedYear').text(e.target.value)
+        $('#selectedYear').text(e.target.value)
+        $('#selectedMYear').text(e.target.value)
+        postDataChartWeek('container-2',URI_SELLER_WEEK, {'year':e.target.value})
+        postDataChartMonth('container-3',URI_SELLER_MONTH, {'year':e.target.value, 'month':''})
         getTheWeekOfYear(e.target.value)
+
 
     });
 
@@ -147,10 +154,34 @@ document.addEventListener('DOMContentLoaded', function () {
     postDataChartMonth('container-3',URI_SELLER_MONTH, {})
     $('#weekSelect').change(e => {
         e.preventDefault()
-
-       postDataChartWeek('container-2',URI_SELLER_WEEK, {'year':$('.selectedYear').text() , 'week': e.target.value})
-
+       postDataChartWeek('container-2',URI_SELLER_WEEK, {'year':$('#selectedYear').text() , 'week': e.target.value})
     });
+    $('#monthSelect').change(e => {
+        e.preventDefault()
+        console.log(e.target.value)
+        postDataChartMonth('container-3',URI_SELLER_OF_MONTH, {'year':$('#selectedMYear').text() , 'month': e.target.value})
+    });
+    postDataProgressQuarter(URI_SELLER_QUARTER, {})
+function postDataProgressQuarter(url, data) {
+    $.post(url, data)
+        .done(function (data) {
+            console.log(data)
+            for (let i = 0; i < data['targetNbVisits'].length; i++) {
+                console.log(data['sellerNbVisits'][i]['nbVisits'])
+                calculateProgressBar(data['sellerNbVisits'][i]['nbVisits'], data['targetNbVisits'][i],'PQ'+(i+1),'STQ'+(i+1), 'TTQ'+(i+1))
+                // Progress bar of clients: the % of visited clients
+                calculateProgressBar(data['sellerNbVisits'][i]['nbNonVClients'], data.nbSellerClients, 'PC'+(i+1), 'CNVQ'+(i+1), 'TC'+(i+1))
+
+            }
+
+        })
+        .fail(function() {
+            $.alert( "error" );
+        })
+        .always(function() {
+            //setTimeout(function(){location.reload()}, 2000);
+        });
+}
 function postDataChartWeek(container,url, data) {
     $.post(url, data)
         .done(function (data) {
@@ -172,7 +203,6 @@ function postDataChartWeek(container,url, data) {
         });
 }
 function postDataChartMonth(container,url, data) {
-    console.log($('.selectedYear')[0])
     $.post(url, data)
         .done(function (data) {
            calculateProgressBar(data['totalMonth'], data['nbVisitsMonthTarget'], 'nbSellerMonthVisits', 'totalVisitMonth', 'totalMonthTarget')
@@ -180,7 +210,7 @@ function postDataChartMonth(container,url, data) {
                 'column',
                 'category',
                 'Total visits per month',
-                'Visits per month - '+$('.selectedYear')[1].innerHTML,
+                'Visits per month - '+$('#selectedMYear').text(),
                 'Month: '+data['month'],
                 'Days',
                 data['dataMonth'])

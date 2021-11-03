@@ -19,6 +19,14 @@ class SellerDashboardController extends AbstractController
     {
     }
 
+    #[Route('/visits-quarter', name: 'seller_visits_quarter', methods: ['POST', 'GET'])]
+    public function createQuarterCard(Request $request, VisitRepository $visitRepo): Response
+    {
+        $data = [];
+        $data = $this->sellerDataManager->sellerVisitsByQuarter($request, $visitRepo, $this->getUser());
+        return new JsonResponse($data);
+    }
+
     #[Route('/visits-week', name: 'seller_visits_week', methods: ['POST', 'GET'])]
     public function createChart(Request $request, VisitRepository $visitRepo): Response
     {
@@ -32,6 +40,14 @@ class SellerDashboardController extends AbstractController
     {
         $parameters = $this->sellerDataManager->sendRequestedParameters($request,'month','m');
         $data = $this->sellerDataManager->visitsPerMonthOfYear($parameters['period'], $parameters['year'], $visitRepo, $this->getUser());
+
+        return new JsonResponse($data);
+    }
+    #[Route('/visits-of-the-month', name: 'seller_visits_the_month', methods: ['POST', 'GET'])]
+    public function createSelectedMonthChart(Request $request, VisitRepository $visitRepo): Response
+    {
+        $parameters = $this->sellerDataManager->sendRequestedParameters($request,'month','m');
+        $data = $this->sellerDataManager->visitsOfTheMonth($parameters['period'], $parameters['year'], $visitRepo, $this->getUser());
 
         return new JsonResponse($data);
     }

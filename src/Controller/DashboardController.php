@@ -40,6 +40,7 @@ class DashboardController extends AbstractController
         foreach ($visits as $visit){
             $temp [] = $visit->getClient();
         }
+
         $clients = array_unique($temp);
         // The amount of sale's user visit per day of current week
         $chart = $this->chartService->buildChart(Chart::TYPE_BAR,

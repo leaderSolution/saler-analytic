@@ -33,6 +33,7 @@ class AddressFixture extends Fixture
         $address->setStreet($this->faker->streetAddress());
         $address->setZip($this->faker->postcode());
         $address->setCountry($this->faker->country());
+        $address->setFullAddress($address->getCity());
         $this->setReference(self::ADDR_REFERENCE, $address);
         return $address;
     }

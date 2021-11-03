@@ -48,7 +48,6 @@ class SellerDataManager
     // The amount of visits per month during This year
     public function visitsPerMonthOfYear($month, $year,VisitRepository $visitRepo, User $user): array
     {
-
         $visits = [];
         $result = [];
         $data = [];
@@ -66,12 +65,107 @@ class SellerDataManager
         $result['dataMonth'] = $data;
         $result['totalMonth'] = $total;
         $result['month'] = $month;
+        $result['nbVisitsMonthTarget'] =12*$this->dateTimeService->daysInMonth((int)$month, (int)$year)*$user->getNbVisitsDay();
+
+        return $result;
+
+    }
+    public function visitsOfTheMonth($month, $year,VisitRepository $visitRepo, User $user): array
+    {
+        $daysList = [];
+        $limitDay = $this->dateTimeService->daysInMonth((int)$month, (int)$year);
+        for ($i=1; $i <= $limitDay; $i++){
+            $daysList [] = new \DateTime($year."-".$month."-".$i);
+        }
+
+        $visits = [];
+        $result = [];
+        $data = [];
+        $total = 0;
+
+        foreach ($daysList as $key => $value) {
+            $visits [] = count($visitRepo->findSellerVisitsOfTheMonth($value->format('Y-m-d'), $user));
+        }
+
+
+        foreach ($daysList as $key => $day){
+            $total+= $visits[$key];
+            $data [] = ['name' => $day->format('d'), 'y' => $visits[$key]];
+        }
+
+        $result['dataMonth'] = $data;
+        $result['totalMonth'] = $total;
+        $result['month'] = $month;
         $result['nbVisitsMonthTarget'] = $this->dateTimeService->daysInMonth((int)$month, (int)$year)*$user->getNbVisitsDay();
 
         return $result;
 
     }
 
+
+    /**
+     * @param Request $request
+     * @param VisitRepository $visitRepository
+     * @param User $user
+     * @return array
+     */
+    public function sellerVisitsByQuarter(Request $request,VisitRepository $visitRepo, User $user):array
+    {
+        $targetNbVisits = [];
+        $sellerNbVisits = [];
+        $visitedClients = [];
+        $tempVC = [];
+        $nonVisitedClients = null;
+        $sellerAllClients = [];
+        $temp = 0;
+        $currentDate = new \DateTime('now');
+        $year = $request->get('year');
+        if(is_null($year)){
+            $year = $currentDate->format('Y');
+        }
+        $quarterNbDays = $this->dateTimeService->getQuarterNbDays($year);
+        foreach ($quarterNbDays as $nbDay){
+            $targetNbVisits [] = $user->getNbVisitsDay()*$nbDay;
+        }
+        $quarterSE = $this->dateTimeService->getQuarterDayStartEnd($year);
+        foreach ($quarterSE as $quarter){
+            foreach ($quarter as $item){
+                $visits = $visitRepo->findSellerVisitsByQuarter($item['start'], $item['end'], $user);
+                if(null != $visits){
+                    foreach ($visits as $visit){
+                        $visitedClients [] = $visit->getClient()->getCodeUniq();
+                        $tempVC [] = $visit->getClient()->getCodeUniq();
+                    }
+                }
+                $temp += count($visitRepo->findSellerVisitsByQuarter($item['start'], $item['end'], $user));
+            }
+            if(null != $user->getClients()){
+                foreach ($user->getClients() as $client) {
+                    $sellerAllClients [] = $client->getCodeUniq();
+
+                }
+                $nonVisitedClients  = array_diff($sellerAllClients, $visitedClients);
+                $sellerNbVisits [] = ["nbVisits"=>$temp, "nbNonVClients" => count(array_unique($nonVisitedClients))];
+                $sellerAllClients = [];
+            }
+
+            $tempVC = [];
+            $temp = 0;
+
+        }
+
+        $result['sellerNbVisits'] = $sellerNbVisits;
+        $result['targetNbVisits'] = $targetNbVisits;
+        $result['nbNonVisitedClients'] = count($nonVisitedClients);
+        $result['nbSellerClients'] = count($user->getClients());
+        $result['nonVisitedClients'] = array_unique($nonVisitedClients);
+        $result['nbVisitedClients'] = count(array_unique($visitedClients));
+
+
+
+        return $result;
+
+    }
     #[ArrayShape(['period' => "mixed|string", 'year' => "mixed|string"])]
     public function sendRequestedParameters(Request $request, $period, $format): array
     {
@@ -83,6 +177,9 @@ class SellerDataManager
         if((is_null($periodP) && is_null($year))){
             $periodP = $currentDate->format($format);
             $year = $currentDate->format('Y');
+        }
+        if(is_null($periodP)){
+            $periodP = $currentDate->format($format);
         }
 
         return ['period'=>$periodP, 'year'=>$year];

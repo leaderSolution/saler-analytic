@@ -6,6 +6,7 @@ use App\Repository\ClientRepository;
 use App\Repository\UserRepository;
 use App\Repository\VisitRepository;
 use DateTime;
+use JetBrains\PhpStorm\Pure;
 
 class DateTimeService
 {
@@ -87,6 +88,78 @@ class DateTimeService
         return $month == 2 ? ($year % 4 ? 28 : ($year % 100 ? 29 : ($year % 400 ? 28 : 29))) : (($month - 1) % 7 % 2 ? 30 : 31);
     }
 
+    public static function getQuarterByMonth($monthNumber): float|int
+    {
+        return floor(($monthNumber - 1) / 3) + 1;
+    }
+
+    /**
+     * @param $yearNumber
+     * @return array
+     */
+    #[Pure]
+    public function getQuarterNbDays($yearNumber): array
+    {
+        $Q = [];
+        $dayCountByMonth = [];
+        $nbDays = 0;
+
+        // Calculate the number of days in each month.
+        for ($i=1; $i<=12; $i++) {
+            $dayCountByMonth[$i] = date("t", strtotime($yearNumber . "-" . $i . "-01"));
+        }
+
+        $nbDaysOfMonths = array_chunk($dayCountByMonth,3);
+        foreach ($nbDaysOfMonths as $daysOfMonth){
+            foreach($daysOfMonth as $item){
+               $nbDays +=$item;
+            }
+            $Q [] = $nbDays;
+            $nbDays = 0;
+
+        }
+
+        return $Q;
+    }
+
+    /**
+     * @param $yearNumber
+     * @return array
+     */
+    #[Pure] public function getQuarterDayStartEnd($yearNumber): array
+    {
+        $dayCountByMonth = [];
+
+        // Calculate the start and end days in each month.
+        for ($i=1; $i<=12; $i++) {
+            $end = date("t", strtotime($yearNumber . "-" . $i . "-01"));
+            $dayCountByMonth[$i] = [
+                "start" => date("Y-m-d", strtotime($yearNumber . "-" . $i . "-01")),
+                "end" => date("Y-m-d", strtotime($yearNumber . "-" . $i ."-". $end ))
+            ];
+        }
+        return array_chunk($dayCountByMonth, 3);
+
+    }
+    public static function getQuarterDay($monthNumber, $dayNumber, $yearNumber) {
+        $quarterDayNumber = 0;
+        $dayCountByMonth = array();
+
+        $startMonthNumber = ((self::getQuarterByMonth($monthNumber) - 1) * 3) + 1;
+
+        // Calculate the number of days in each month.
+        for ($i=1; $i<=12; $i++) {
+            $dayCountByMonth[$i] = date("t", strtotime($yearNumber . "-" . $i . "-01"));
+        }
+
+        for ($i=$startMonthNumber; $i<=$monthNumber-1; $i++) {
+            $quarterDayNumber += $dayCountByMonth[$i];
+        }
+
+        $quarterDayNumber += $dayNumber;
+
+        return $quarterDayNumber;
+    }
     // The amount of visits per day during This week
     public function numVisitsPerDayOfThisWeek(VisitRepository $visitRepo): array
     {

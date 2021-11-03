@@ -5,7 +5,7 @@
 {% block content %}
     {% set today =  'now' | date('d/m/Y')  %}
 
-    <div class="grey-bg container-fluid">
+    <div class="grey-bg container-fluid" xmlns="http://www.w3.org/1999/html">
         <section id="minimal-statistics">
             <div class="row">
                 <div class="col-lg-10 mt-3 mb-1">
@@ -30,91 +30,31 @@
             </div>
 
             <div class="row">
-                <div class="col-xl-3 col-sm-6 col-12">
-                    <div class="card">
-                        <div class="card-content">
-                            <div class="card-body">
-                                <div style="text-align: right">
-                                    <div class="media-body">
-                                        <h3 class="primary">T1</h3>
-                                    </div>
-                                </div>
-                                Objectif de visits
-                                <div class="progress mt-1 mb-0" style="height: 7px;">
-                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 10%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="300"></div>
-                                </div>
-                                Nb clients non visités
-                                <div class="progress mt-1 mb-0" style="height: 7px;">
-                                    <div class="progress-bar bg-primary" role="progressbar" style="width: {{ nbVisits }}%" aria-valuenow="{{ nbVisits }}" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-sm-6 col-12">
-                    <div class="card">
-                        <div class="card-content">
-                            <div class="card-body">
-                                <div style="text-align: right">
-                                    <div class="media-body">
-                                        <h3 class="primary">T2</h3>
-                                    </div>
-                                </div>
-                                Objectif de visits
-                                <div class="progress mt-1 mb-0" style="height: 7px;">
-                                    <div class="progress-bar bg-primary" role="progressbar" style="width: {{ nbVisits }}%" aria-valuenow="{{ nbVisits }}" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                                Nb clients non visités
-                                <div class="progress mt-1 mb-0" style="height: 7px;">
-                                    <div class="progress-bar bg-primary" role="progressbar" style="width: {{ nbVisits }}%" aria-valuenow="{{ nbVisits }}" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-xl-3 col-sm-6 col-12">
-                    <div class="card">
-                        <div class="card-content">
-                            <div class="card-body">
-                                <div style="text-align: right">
-                                    <div class="media-body">
-                                        <h3 class="primary">T3</h3>
-                                    </div>
-                                </div>
-                                Objectif de visits
-                                <div class="progress mt-1 mb-0" style="height: 7px;">
-                                    <div class="progress-bar bg-primary" role="progressbar" style="width: {{ nbVisits }}%" aria-valuenow="{{ nbVisits }}" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                                Nb clients non visités
-                                <div class="progress mt-1 mb-0" style="height: 7px;">
-                                    <div class="progress-bar bg-primary" role="progressbar" style="width: {{ nbVisits }}%" aria-valuenow="{{ nbVisits }}" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-sm-6 col-12">
-                    <div class="card">
-                        <div class="card-content">
-                            <div class="card-body">
-                                <div style="text-align: right">
-                                    <div class="media-body">
-                                        <h3 class="primary">T4</h3>
-                                    </div>
-                                </div>
-                                Objectif de visits
-                                <div class="progress mt-1 mb-0" style="height: 7px;">
-                                    <div class="progress-bar bg-primary" role="progressbar" style="width: {{ nbVisits }}%" aria-valuenow="{{ nbVisits }}" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                                Nb clients non visités
-                                <div class="progress mt-1 mb-0" style="height: 7px;">
-                                    <div class="progress-bar bg-primary" role="progressbar" style="width: {{ nbVisits }}%" aria-valuenow="{{ nbVisits }}" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+               {% for i in 1..4 %}
+                   <div class="col-xl-3 col-sm-6 col-12">
+                       <div class="card">
+                           <div class="card-content">
+                               <div class="card-body">
+                                   <div style="text-align: right">
+                                       <div class="media-body">
+                                           <h3 class="primary">T{{ i }}</h3>
+                                       </div>
+                                   </div>
+                                   <small class="text-muted">Objectif de visits</small> <span id="TTQ{{ i }}"></span><br>
+                                   <small class="text-muted">Total visits</small> <span id="STQ{{ i }}"></span>
+                                   <div class="progress mt-1 mb-0" style="height: 7px;">
+                                       <div id="PQ{{ i }}" class="progress-bar bg-info" role="progressbar"></div>
+                                   </div>
+                                   <small class="text-muted">Non visited clients </small> <span id="CNVQ{{ i }}"></span><br>
+                                   <small class="text-muted">Your clients </small> <span id="TC{{ i }}"></span>
+                                   <div class="progress mt-1 mb-0" style="height: 7px;">
+                                       <div id="PC{{ i }}" class="progress-bar bg-primary" role="progressbar"></div>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+               {% endfor %}
             </div>
         </section>
 
@@ -146,7 +86,7 @@
                                             </select>
                                         </div>
                                         <div class="col">
-                                            <h4><span class="badge bg-info text-dark selectedYear"></span></h4>
+                                            <h4><span class="badge bg-info text-dark" id="selectedYear"></span></h4>
                                         </div>
                                     </div>
                                 </div>
@@ -187,22 +127,13 @@
                                         <div class="col">
                                             <select class="form-control" id="monthSelect">
                                                 <option value="0">Choose Month</option>
-                                                <option value="01">January</option>
-                                                <option value="02">February</option>
-                                                <option value="03">March</option>
-                                                <option value="04">April</option>
-                                                <option value="05">May</option>
-                                                <option value="06">June</option>
-                                                <option value="07">July</option>
-                                                <option value="08">August</option>
-                                                <option value="09">September</option>
-                                                <option value="10">October</option>
-                                                <option value="11">November</option>
-                                                <option value="12">December</option>
+                                                {% for m in months() %}
+                                                    <option value="{{ loop.index }}">{{ m }}</option>
+                                                {% endfor %}
                                             </select>
                                         </div>
                                         <div class="col">
-                                            <h4><span class="badge bg-info text-dark selectedYear"></span></h4>
+                                            <h4><span class="badge bg-info text-dark" id="selectedMYear"></span></h4>
                                         </div>
                                     </div>
                                 </div>

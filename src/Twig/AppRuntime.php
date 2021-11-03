@@ -7,9 +7,11 @@ use DateTime;
 use Symfony\Component\Security\Core\Security;
 use Twig\Extension\RuntimeExtensionInterface;
 
+
 class AppRuntime implements RuntimeExtensionInterface
 {
 
+    public const MONTHS = ['Jan', 'Fev', 'Mar', 'Avr', 'Mai', 'Jun', 'Jui', 'Août','Sep', 'Oct', 'Nov', 'Dec'];
 
     /**
      * @param VisitRepository $visitRepo
@@ -38,10 +40,23 @@ class AppRuntime implements RuntimeExtensionInterface
         return count($clients);
     }
 
+    /**
+     * @param $year
+     * @return int
+     */
     function lastWeekOfYear($year): int
     {
         $date = new DateTime;
         $date->setISODate($year, 53);
         return ($date->format("W") === "53" ? 53 : 52);
+    }
+
+
+    /**
+     * @return string[]
+     */
+    public function months(): array
+    {
+        return self::MONTHS;
     }
 }
