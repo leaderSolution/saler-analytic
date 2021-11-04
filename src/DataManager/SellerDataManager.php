@@ -115,7 +115,8 @@ class SellerDataManager
         $sellerNbVisits = [];
         $visitedClients = [];
         $tempVC = [];
-        $nonVisitedClients = null;
+        $A = [];
+        $nonVisitedClients = [];
         $sellerAllClients = [];
         $temp = 0;
         $currentDate = new \DateTime('now');
@@ -137,18 +138,27 @@ class SellerDataManager
                         $tempVC [] = $visit->getClient()->getCodeUniq();
                     }
                 }
-                $temp += count($visitRepo->findSellerVisitsByQuarter($item['start'], $item['end'], $user));
+
+                $temp += count($visits);
             }
             if(null != $user->getClients()){
                 foreach ($user->getClients() as $client) {
-                    $sellerAllClients [] = $client->getCodeUniq();
+                    if(is_null($client->getIsProspect()) || $client->getIsProspect() == false){
+                        $sellerAllClients [] = $client->getCodeUniq();
+                    }
 
                 }
-                $nonVisitedClients  = array_diff($sellerAllClients, $visitedClients);
-                $sellerNbVisits [] = ["nbVisits"=>$temp, "nbNonVClients" => count(array_unique($nonVisitedClients))];
-                $sellerAllClients = [];
+
+                $A = array_diff(array_unique($sellerAllClients),array_unique($tempVC));
+                $sellerNbVisits [] = ["nbVisits"=>$temp,
+                    "nbNonVClients" => count($A),
+                     "nonVCQuarter" => array_values($A),
+                    ];
+
             }
 
+            $sellerAllClients = [];
+            $nonVisitedClients = [];
             $tempVC = [];
             $temp = 0;
 

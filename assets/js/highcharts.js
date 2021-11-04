@@ -1,3 +1,4 @@
+import 'jquery-confirm'
 const Highcharts = require('highcharts/highcharts');  // or require('highcharts/highstock');
 window.Highcharts = Highcharts;
 
@@ -172,7 +173,37 @@ function postDataProgressQuarter(url, data) {
                 // Progress bar of clients: the % of visited clients
                 calculateProgressBar(data['sellerNbVisits'][i]['nbNonVClients'], data.nbSellerClients, 'PC'+(i+1), 'CNVQ'+(i+1), 'TC'+(i+1))
 
+                $('#cardT'+(i+1)).click(function (data){
+                    $.confirm({
+                        columnClass: 'col-md-6',
+                        type: 'red',
+                        content: function () {
+                            var self = this;
+                            return $.ajax({
+                                url: URI_SELLER_QUARTER,
+                                dataType: 'json',
+                                method: 'get'
+                            }).done(function (response) {
+                                console.log(response)
+
+                                for (let j = 0; j < response['sellerNbVisits'][i]['nonVCQuarter'].length; j++) {
+
+                                    self.setContentAppend('<li class="list-group-item">' +
+                                        "<td>"+response['sellerNbVisits'][i]['nonVCQuarter'][j]+"</td>"+
+                                        '</li>')
+                                }
+
+
+                                self.setTitle("Non Visited Clients list");
+                            }).fail(function(){
+                                self.setContent('Something went wrong.');
+                            });
+                        }
+                    });
+                })
+
             }
+
 
         })
         .fail(function() {
