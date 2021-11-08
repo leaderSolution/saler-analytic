@@ -33,8 +33,9 @@ class VisitType extends AbstractType
                 ],
                 
             ])
-            ->add('type', ChoiceType::class, [
+            ->add('types', ChoiceType::class, [
                 'placeholder' => 'Choose an option',
+                'multiple' => true,
                 'choices'  => [
                     'Assistance' => 1,
                     'Delivery' => 2,
@@ -49,8 +50,7 @@ class VisitType extends AbstractType
             ->add('startTime', DateTimeType::class, ['widget' => 'single_text',])
             ->add('endTime', DateTimeType::class, ['widget' => 'single_text',])
             ->add('backgroundColor', ColorType::class)
-            ->add('borderColor', ColorType::class)
-            ->add('textColor', ColorType::class)
+
             ->add('allDay', CheckboxType::class, ['attr' => ['class' => 'form-check-input']])
             ->add('client', ClientSelectTextType::class)
             //->add('address', AddressType::class, [])

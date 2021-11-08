@@ -2,6 +2,7 @@
 
 namespace App\Twig;
 
+use App\Repository\ClientRepository;
 use App\Repository\VisitRepository;
 use DateTime;
 use Symfony\Component\Security\Core\Security;
@@ -15,9 +16,10 @@ class AppRuntime implements RuntimeExtensionInterface
 
     /**
      * @param VisitRepository $visitRepo
-     * @param Security        $security
+     * @param ClientRepository $clientRepository
+     * @param Security $security
      */
-    public function __construct(private VisitRepository $visitRepo, private Security $security)
+    public function __construct(private VisitRepository $visitRepo,private ClientRepository $clientRepository ,private Security $security)
     {
     }
 
@@ -35,7 +37,7 @@ class AppRuntime implements RuntimeExtensionInterface
      */
     public function sellerNbClients(): int
     {
-        $clients = $this->security->getUser()->getClients();
+        $clients = $this->clientRepository->findBy(['user'=>$this->security->getUser(),'isProspect'=>null, 'isProspect'=>false ]);
 
         return count($clients);
     }

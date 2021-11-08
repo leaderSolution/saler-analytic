@@ -122,11 +122,6 @@ class Visit
     private $active;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $type;
-
-    /**
      * @ORM\Column(type="text", nullable=true)
      */
     private $comment;
@@ -145,6 +140,11 @@ class Visit
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $updatedAt;
+
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     */
+    private $types = [];
 
     /**
      */
@@ -289,18 +289,6 @@ class Visit
         return $this;
     }
 
-    public function getType(): ?int
-    {
-        return $this->type;
-    }
-
-    public function setType(?int $type): self
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
     public function getComment(): ?string
     {
         return $this->comment;
@@ -345,6 +333,18 @@ class Visit
     public function setUpdatedAt(?\DateTimeImmutable $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getTypes(): ?array
+    {
+        return $this->types;
+    }
+
+    public function setTypes(?array $types): self
+    {
+        $this->types = $types;
 
         return $this;
     }

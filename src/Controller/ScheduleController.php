@@ -73,10 +73,10 @@ class ScheduleController extends AbstractController
                 'id' => $visit->getId(),
                 'start' => $visit->getStartTime()->format('Y-m-d H:i:s'),
                 'end' => $visit->getEndTime()->format('Y-m-d H:i:s'),
-                'title' => $visit->getTitle(),
+                'title' => $visit->getTitle()." | ".$visit->getClient()->getDesignation(),
                 'backgroundColor' => $visit->getBackgroundColor(),
-                'borderColor' => $visit->getBorderColor(),
-                'textColor' => $visit->getTextColor(),
+                'borderColor' => $visit->getBackgroundColor(),
+                'textColor' => 'white',
                 'allDay' => $visit->getAllDay(),
                 'isDone' => $visit->getIsDone(),
 
@@ -105,7 +105,7 @@ class ScheduleController extends AbstractController
             $visit->setIsDone(false);
         }
         if (null !== $title) {
-            $visit->setTitle($title);
+            $visit->setTitle(strtok($title, '|'));
         } else {
             if (self::INVALID_DATE !== $startAt) {
                 $visit->setStartTime(new DateTime($startAt));
@@ -131,51 +131,10 @@ class ScheduleController extends AbstractController
             $visits = $this->getUser()->getVisits();
         }
         
-        return $this->render('seller/visits.html.twig', ['visites' => $visits ]);
-    }
-
-    #[Route('/visits/edit/{id}', name: 'visit_edit', methods: ['GET', 'POST'])]
-    public function editVisit(Request $request, Visit $visit): Response
-    {
-        $form = $this->createForm(VisitType::class, $visit);
-        $form->add('isDone',CheckboxType::class, [
-            'label'    => 'Completed ?',
-            'required' => false,
-        ]);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
-
-            return $this->redirectToRoute('visit_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->renderForm('seller/edit_visit.html.twig', [
-            'visit' => $visit,
-            'form' => $form,
-        ]);
-    }
-
-    #[Route('/clients', name: 'seller_clients', methods: ['GET', 'POST'])]
-    public function sellerClients(ClientRepository $clientRepository): Response
-    {
-        $clients = null;
-        if ($this->getUser()) {
-            $clients = $clientRepository->findBy(['user' => $this->getUser()]);
-        }
-
-        return $this->render('seller/clients.html.twig', ['clients' => $clients ]);
+        return $this->render('seller/visits.html.twig', ['visits' => $visits ]);
     }
 
 
-    #[Route('/delete-visit', name: 'delete_visit', methods: ['POST'])]
-    public function sellerDeleteVisit(Request $request, VisitRepository $visitRep): Response
-    {
 
-        $visitID = (int) $request->get('visitID');
-        $visit = $visitRep->findOneBy(['id' => $visitID]);
-        $this->getDoctrine()->getManager()->remove($visit);
-        $this->getDoctrine()->getManager()->flush();
-        return new JsonResponse($visit->getTitle());
-    }
+
 }

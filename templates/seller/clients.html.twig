@@ -13,6 +13,7 @@
 						<th>CodeUniq</th>
 						<th>Designation </th>
 						<th>Region</th>
+						<th>Visits</th>
 						<th>Seller</th>
 					</tr>
 				</thead>
@@ -20,10 +21,18 @@
 					{% for client in clients %}
 						<tr>
 							<td>{{ client.codeUniq }}</td>
-							<td>
-								{{ client.designation }}
-							</td>
+							<td>{{ client.designation }}</td>
 							<td>{{ client.region }}</td>
+							<td>
+								{% if client.visits|length == 0 %}
+									<span class="badge bg-warning">No visit</span>
+								{% else %}
+									<a class="badge bg-info" href="{{ path('seller_client_visits', {'id': client.id }) }}" >
+										{{ client.visits|length }}
+										<span class="text-muted">Visits</span>
+									</a>
+								{% endif %}
+							</td>
 							<td>{{ client.user.fullName }}</td>
 
 						</tr>

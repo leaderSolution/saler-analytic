@@ -1,5 +1,7 @@
 import 'jquery-confirm'
 const Highcharts = require('highcharts/highcharts');  // or require('highcharts/highstock');
+import 'datatables.net'
+import 'datatables.net-bs5'
 window.Highcharts = Highcharts;
 
 function calculateProgressBar(total, target, idP, idTotal, idTarget) {
@@ -28,6 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let URI_SELLER_OF_MONTH = '/seller/visits-of-the-month'
     let URI_SELLER_QUARTER = '/seller/visits-quarter'
     let URL_LAST_WEEK = '/last-num-week'
+    let URI_SELLER_UNVISITED_CLIENT = '/seller/clients-list';
     const d = new Date();
     let year = d.getFullYear();
     $('#years').change(e => {
@@ -122,6 +125,7 @@ document.addEventListener('DOMContentLoaded', function () {
         $('#selectedMYear').text(e.target.value)
         postDataChartWeek('container-2',URI_SELLER_WEEK, {'year':e.target.value})
         postDataChartMonth('container-3',URI_SELLER_MONTH, {'year':e.target.value, 'month':''})
+        postDataProgressQuarter(URI_SELLER_QUARTER, {'year': e.target.value})
         getTheWeekOfYear(e.target.value)
 
 
@@ -173,33 +177,31 @@ function postDataProgressQuarter(url, data) {
                 // Progress bar of clients: the % of visited clients
                 calculateProgressBar(data['sellerNbVisits'][i]['nbNonVClients'], data.nbSellerClients, 'PC'+(i+1), 'CNVQ'+(i+1), 'TC'+(i+1))
 
-                $('#cardT'+(i+1)).click(function (data){
-                    $.confirm({
-                        columnClass: 'col-md-6',
-                        type: 'red',
-                        content: function () {
-                            var self = this;
-                            return $.ajax({
-                                url: URI_SELLER_QUARTER,
-                                dataType: 'json',
-                                method: 'get'
-                            }).done(function (response) {
-                                console.log(response)
+                $('#cardT'+(i+1)).click(function (){
 
-                                for (let j = 0; j < response['sellerNbVisits'][i]['nonVCQuarter'].length; j++) {
+                    /**/
 
-                                    self.setContentAppend('<li class="list-group-item">' +
-                                        "<td>"+response['sellerNbVisits'][i]['nonVCQuarter'][j]+"</td>"+
-                                        '</li>')
-                                }
+                    $.post(URI_SELLER_UNVISITED_CLIENT, {'data': data['sellerNbVisits'][i]['nonVCQuarter'] })
+                        .done(function (response) {
+                            console.log(response)
 
-
-                                self.setTitle("Non Visited Clients list");
-                            }).fail(function(){
-                                self.setContent('Something went wrong.');
+                            $.dialog({
+                                title: 'List of unvisited clients',
+                                content: response,
+                                animation: 'scale',
+                                columnClass: 'col-md-8',
+                                closeAnimation: 'scale',
+                                type: 'green',
+                                backgroundDismiss: true,
                             });
-                        }
-                    });
+                        })
+                        .fail(function() {
+                            $.alert( "error" );
+                        })
+                        .always(function() {
+                            //setTimeout(function(){location.reload()}, 2000);
+                        });
+
                 })
 
             }
@@ -308,29 +310,6 @@ function createTheChart($container, type, typeX, titleY,title, subTitle, seriesN
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

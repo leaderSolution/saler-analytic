@@ -3,6 +3,7 @@
 namespace App\DataManager;
 
 use App\Entity\User;
+use App\Repository\ClientRepository;
 use App\Repository\VisitRepository;
 use App\Service\DateTimeService;
 use JetBrains\PhpStorm\ArrayShape;
@@ -12,7 +13,6 @@ class SellerDataManager
 {
     public const DAYS = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
     public const MONTHS = ['Jan', 'Fev', 'Mar', 'Avr', 'Mai', 'Jun', 'Jui', 'aout','Sep', 'Oct', 'Nov', 'Dec'];
-
 
     public function __construct(private DateTimeService $dateTimeService)
     {
@@ -105,22 +105,27 @@ class SellerDataManager
 
     /**
      * @param Request $request
-     * @param VisitRepository $visitRepository
+     * @param VisitRepository $visitRepo
+     * @param ClientRepository $clientRepo
      * @param User $user
      * @return array
      */
-    public function sellerVisitsByQuarter(Request $request,VisitRepository $visitRepo, User $user):array
+    public function sellerVisitsByQuarter(Request $request,VisitRepository $visitRepo,ClientRepository $clientRepo, User $user):array
     {
         $targetNbVisits = [];
         $sellerNbVisits = [];
         $visitedClients = [];
         $tempVC = [];
         $A = [];
+        $B = [];
+        $tabNVC = [];
+        $tabALL = [];
         $nonVisitedClients = [];
         $sellerAllClients = [];
         $temp = 0;
         $currentDate = new \DateTime('now');
         $year = $request->get('year');
+        $nbSellerClients = count($clientRepo->findBy(['user' =>$user, 'isProspect'=> null,'isProspect'=> false]));
         if(is_null($year)){
             $year = $currentDate->format('Y');
         }
@@ -135,7 +140,8 @@ class SellerDataManager
                 if(null != $visits){
                     foreach ($visits as $visit){
                         $visitedClients [] = $visit->getClient()->getCodeUniq();
-                        $tempVC [] = $visit->getClient()->getCodeUniq();
+                        $tempVC [] = $visit->getClient()->getDesignation();
+                        $tabNVC [] = $visit->getClient()->getCodeUniq();
                     }
                 }
 
@@ -144,15 +150,17 @@ class SellerDataManager
             if(null != $user->getClients()){
                 foreach ($user->getClients() as $client) {
                     if(is_null($client->getIsProspect()) || $client->getIsProspect() == false){
-                        $sellerAllClients [] = $client->getCodeUniq();
+                        $sellerAllClients [] = $client->getDesignation();
+                        $tabALL [] = $client->getCodeUniq();
                     }
 
                 }
 
                 $A = array_diff(array_unique($sellerAllClients),array_unique($tempVC));
+                $B = array_diff(array_unique($tabALL),array_unique($tabNVC));
                 $sellerNbVisits [] = ["nbVisits"=>$temp,
                     "nbNonVClients" => count($A),
-                     "nonVCQuarter" => array_values($A),
+                     "nonVCQuarter" => array_values($B),
                     ];
 
             }
@@ -164,10 +172,11 @@ class SellerDataManager
 
         }
 
+
         $result['sellerNbVisits'] = $sellerNbVisits;
         $result['targetNbVisits'] = $targetNbVisits;
         $result['nbNonVisitedClients'] = count($nonVisitedClients);
-        $result['nbSellerClients'] = count($user->getClients());
+        $result['nbSellerClients'] = $nbSellerClients;
         $result['nonVisitedClients'] = array_unique($nonVisitedClients);
         $result['nbVisitedClients'] = count(array_unique($visitedClients));
 
@@ -194,4 +203,5 @@ class SellerDataManager
 
         return ['period'=>$periodP, 'year'=>$year];
     }
+
 }

@@ -10,22 +10,39 @@
         <thead>
             <tr>
                 <th>Title</th>
-                <th>Start At</th>
-                <th>End At</th>
+                <th>Date</th>
+                <th>Type</th>
                 <th>Client</th>
                 <th>ACTIONS</th>
             </tr>
         </thead>
         <tbody>
-            {% for v in visites %}
+            {% for v in visits %}
                 <tr>
                     <td>{{ v.title }}</td>
                     <td>{{ v.startTime|date('d/m/Y H:i')}}</td>
-                    <td>{{ v.endTime|date('d/m/Y H:i')}}</td>
+                    <td>
+                       {% for type in v.types %}
+                           {% if type == 1 %}
+                               Assistance &nbsp;
+                           {% elseif type == 2 %}
+                               Delivery &nbsp;
+                           {% elseif type == 3 %}
+                               Recovery &nbsp;
+                           {% elseif type == 4 %}
+                               Administrative &nbsp;
+                           {% elseif type == 5 %}
+                               Commercial &nbsp;
+                           {% elseif type == 6 %}
+                               Other &nbsp;
+                           {% endif %}
+                       {% endfor %}
+
+                    </td>
                     <td>{{ v.client.email }}</td>
                     <td>
                         <div class="btn-group" role="group" aria-label="Basic example">
-                            <a  href="{{ path('visit_edit', {'id': v.id })}}">
+                            <a  href="{{ path('visit_edit', {'id': v.id, 'idC': v.client.id })}}">
                                 <i class="fs-5 bi-pencil-square"></i>
                             </a>
                             <a href="#">

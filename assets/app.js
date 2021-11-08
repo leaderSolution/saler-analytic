@@ -46,12 +46,13 @@ $(document).ready(function() {
  
         
     } );
-   
-    
- 
+
+
+    $('#nonVC').DataTable();
     var table = $('#example').DataTable( {
         orderCellsTop: true,
-        fixedHeader: true
+        fixedHeader: true,
+
     } );
     var checkBoxs = document.getElementsByClassName("visitActive");
     console.log(checkBoxs)

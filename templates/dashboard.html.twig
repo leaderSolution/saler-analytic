@@ -41,7 +41,7 @@
 				{% if notifications() is not empty %}
 
 					{% for notif in notifications() %}
-						<li><a href="{{ path('visit_edit', {'id': notif.id }) }}" class="dropdown-item" type="button">{{ notif.title }}</a></li>
+						<li><a href="{{ path('visit_edit', {'id': notif.id, 'idC': notif.client.id }) }}" class="dropdown-item" type="button">{{ notif.title }}</a></li>
 					{% endfor %}
 				{% else %}
 					<li><button class="dropdown-item" type="button">None</button></li>
@@ -67,4 +67,5 @@
 		</div>
 
 	</div>
+
 {% endblock %}

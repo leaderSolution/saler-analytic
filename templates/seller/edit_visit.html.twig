@@ -14,20 +14,12 @@
 					<label>Title</label>
 					{{ form_widget(form.title) }}
 					<label>Type</label>
-					{{ form_widget(form.type) }}
+					{{ form_widget(form.types) }}
 					<br>
 					<div class="row">
 						<div class="col">
 							<label>BackgroundColor</label>
 							{{ form_widget(form.backgroundColor) }}
-						</div>
-						<div class="col">
-							<label>BorderColor</label>
-							{{ form_widget(form.borderColor) }}
-						</div>
-						<div class="col">
-							<label>Text Color</label>
-							{{ form_widget(form.textColor) }}
 						</div>
 					</div>
 					<div class="row">
@@ -59,7 +51,7 @@
 				</div>
 				<div class="col">
 					  <label>Vise-à-vis du client </label>
-					  	{{ form_widget(form.client) }}
+					{{ form_row(form.client) }}
 				</div>
 				
 			</div>
