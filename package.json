@@ -39,16 +39,22 @@
         "autocompleter": "^6.1.0",
         "bootstrap-autocomplete": "^2.3.7",
         "bootstrap-icons": "^1.5.0",
+        "buttons": "^0.1.2",
+        "datatables-buttons": "^1.0.3",
         "datatables.net": "^1.10.25",
         "datatables.net-bs5": "^1.10.25",
+        "datatables.net-buttons": "^2.0.1",
         "fullcalendar": "^5.8.0",
         "highcharts": "^9.2.2",
         "hotkeys-js": "^3.8.7",
         "jquery-confirm": "^3.3.4",
+        "jszip": "^3.7.1",
         "moment": "^2.29.1",
         "moment-timezone": "^0.5.33",
+        "pdfmake": "^0.2.3",
         "places.js": "^1.19.0",
         "popper.js": "^1.16.1",
+        "print": "^1.2.0",
         "select2": "^4.1.0-rc.0"
     }
 }

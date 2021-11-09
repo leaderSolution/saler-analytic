@@ -157,63 +157,6 @@
                 </div>
             </div>
             <hr>
-            <div class="row">
-                <div class="col-xl-6 col-md-12">
-                    <div class="card">
-                        <div class="card-content">
-                            <div class="card-body cleartfix">
-                                <div class="media align-items-stretch">
-                                    <div class="align-self-center">
-                                        <h4>Recent Visits</h4>
-                                    </div>
-                                    <ul class="list-group">
-                                        {% if visits is not empty %}
-                                            {% for v in visits %}
-                                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                    {{ v.title }}
-                                                    <span class="badge bg-info rounded-pill">{{ v.startTime |date('g:i a') }} </span>
-                                                </li>
-                                            {% endfor %}
-                                        {% else %}
-                                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                None
-                                            </li>
-                                        {% endif %}
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-xl-6 col-md-12">
-                    <div class="card">
-                        <div class="card-content">
-                            <div class="card-body cleartfix">
-                                <div class="media align-items-stretch">
-                                    <div class="align-self-center">
-                                        <h4>Recent Clients</h4>
-                                    </div>
-                                    <ul class="list-group">
-                                        {% if clients is not empty %}
-                                            {% for c in clients %}
-                                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                    {{ c.codeUniq }}
-                                                    <span class="badge bg-primary rounded-pill">{{ c.visits |length }} visits</span>
-                                                </li>
-                                            {% endfor %}
-                                        {% else %}
-                                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                None
-                                            </li>
-                                        {% endif %}
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </section>
     </div>
 

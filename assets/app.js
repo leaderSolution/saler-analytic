@@ -10,6 +10,15 @@ import './styles/app.scss';
 import './styles/login.css'
 import 'datatables.net'
 import 'datatables.net-bs5'
+import 'datatables-buttons'
+import 'jszip'
+/*import 'pdfmake/build/pdfmake.min'
+import 'pdfmake/build/vfs_fonts'*/
+import pdfMake from "pdfmake/build/pdfmake";
+import pdfFonts from "pdfmake/build/vfs_fonts";
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
+
+import 'datatables.net-buttons/js/buttons.html5.min'
 // You can specify which plugins you need
 import 'bootstrap';
 require('bootstrap-icons/font/bootstrap-icons.css');
@@ -50,8 +59,9 @@ $(document).ready(function() {
 
     $('#nonVC').DataTable();
     var table = $('#example').DataTable( {
-        orderCellsTop: true,
-        fixedHeader: true,
+
+        dom: 'Bfrtip',
+        buttons: [  'copy', 'csv', 'excel', 'pdf', 'print' ]
 
     } );
     var checkBoxs = document.getElementsByClassName("visitActive");
