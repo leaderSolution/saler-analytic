@@ -24,7 +24,7 @@ class ClientFixtures extends Fixture
 
     public function load(ObjectManager $manager)
     {
-        $fileName = "visit-seller-h-xlsx-Feuil1-4-618144e5bfdae.csv";
+        $fileName = "Houssem-CA-xlsx-Houssem-618bdfdfe373e.csv";
         $inputFile = '/var/www/sellerAnalytic/public/uploads/CSVFiles/'.$fileName;
         $decoder = new Serializer([new ObjectNormalizer()], [new CsvEncoder()]);
         $rows = $decoder->decode(file_get_contents($inputFile), 'csv');
@@ -34,7 +34,9 @@ class ClientFixtures extends Fixture
             $client->setEmail('exemple'.$key.'@gmail.com');
             $client->setDesignation($row['designation']);
             $client->setUser($this->getReference(UserFixtures::SELLER_REFERENCE));
-            $client->setRegion($row['city']);
+            $client->setRegion($row['region']);
+            $client->setTurnover((float)$row['turnover']);
+            $client->setIsProspect(false);
             $manager->persist($client);
             $this->setReference(self::CLIENT_REF, $client);
         }

@@ -38,7 +38,7 @@ class SellerDataManager
         $result ['data'] = $data;
         $result['total'] = $total;
         $result['week'] = $week;
-        $result['nbVisitsTarget'] = 7*$user->getNbVisitsDay();
+        $result['nbVisitsTarget'] = 5*$user->getNbVisitsDay();
 
         return $result;
 

@@ -40,7 +40,7 @@ class UserFixtures extends Fixture
     public function createUser(): User
     {
         $user = new User();
-        $user->setEmail('houssem.trabelssi@amt.tn');
+        $user->setEmail('houssem.trabelsi@amt.tn');
         $user->setFirstname('Houssem');
         $user->setLastname('Trabelssi');
         $user->setRoles(['ROLE_USER']);

@@ -178,7 +178,8 @@ class VisitController extends AbstractController
             $client->setEmail('exemple'.$key.'@gmail.com');
             $client->setDesignation($row['designation']);
             $client->setUser($seller);
-            $client->setRegion($row['city']);
+            $client->setRegion($row['region']);
+            $client->setTurnover((float)$row['turnover']);
             $this->em->persist($client);
         }
         $this->em->flush();
