@@ -75,8 +75,8 @@
             "@auto-scripts"
         ],
         "compile": [
-            "php bin/console make:migration",
-            "php bin/console doctrine:migrations:migrate"
+            "@php bin/console make:migration",
+            "@php bin/console doctrine:migrations:migrate"
         ]
     },
     "conflict": {
@@ -91,9 +91,9 @@
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.4",
         "fakerphp/faker": "^1.14",
-        "symfony/maker-bundle": "^1.32",
+        "symfony/dotenv": "5.3.*",
+        "symfony/maker-bundle": "^1.34",
         "symfony/stopwatch": "^5.3",
-        "symfony/web-profiler-bundle": "^5.3",
-        "symfony/dotenv": "5.3.*"
+        "symfony/web-profiler-bundle": "^5.3"
     }
 }
