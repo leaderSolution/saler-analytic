@@ -1,0 +1,38 @@
+{
+  "entrypoints": {
+    "app": {
+      "js": [
+        "/build/vendors-node_modules_core-js_modules_es_object_to-string_js-node_modules_jquery-confirm_dist_-759dbb.js",
+        "/build/vendors-node_modules_core-js_modules_es_array_find_js-node_modules_core-js_modules_es_promise-488ec9.js",
+        "/build/vendors-node_modules_core-js_internals_regexp-flags_js-node_modules_datatables_net-bs5_js_dat-8481b4.js",
+        "/build/vendors-node_modules_symfony_stimulus-bridge_dist_index_js-node_modules_symfony_stimulus-brid-1a91d9.js",
+        "/build/app.js"
+      ],
+      "css": [
+        "/build/vendors-node_modules_symfony_stimulus-bridge_dist_index_js-node_modules_symfony_stimulus-brid-1a91d9.css",
+        "/build/assets_styles_app_scss-assets_styles_app_scss-assets_styles_app_scss-assets_styles_app_scss-a-5dd087.css",
+        "/build/app.css"
+      ]
+    },
+    "schedule": {
+      "js": [
+        "/build/vendors-node_modules_core-js_modules_es_object_to-string_js-node_modules_jquery-confirm_dist_-759dbb.js",
+        "/build/vendors-node_modules_core-js_modules_es_array_find_js-node_modules_core-js_modules_es_promise-488ec9.js",
+        "/build/vendors-node_modules_fullcalendar_core_main_js-node_modules_fullcalendar_interaction_main_js--3778a3.js",
+        "/build/schedule.js"
+      ],
+      "css": [
+        "/build/vendors-node_modules_fullcalendar_core_main_js-node_modules_fullcalendar_interaction_main_js--3778a3.css",
+        "/build/assets_styles_app_scss-assets_styles_app_scss-assets_styles_app_scss-assets_styles_app_scss-a-5dd087.css"
+      ]
+    },
+    "highcharts": {
+      "js": [
+        "/build/vendors-node_modules_core-js_modules_es_object_to-string_js-node_modules_jquery-confirm_dist_-759dbb.js",
+        "/build/vendors-node_modules_core-js_internals_regexp-flags_js-node_modules_datatables_net-bs5_js_dat-8481b4.js",
+        "/build/vendors-node_modules_core-js_modules_es_date_to-string_js-node_modules_core-js_modules_es_reg-74220a.js",
+        "/build/highcharts.js"
+      ]
+    }
+  }
+}
