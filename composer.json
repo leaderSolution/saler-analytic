@@ -76,7 +76,7 @@
             "@auto-scripts"
         ],
         "compile": [
-            "php bin/console make:migrate",
+            "php bin/console make:migration",
             "php bin/console doctrine:migrations:migrate"
         ]
     },
