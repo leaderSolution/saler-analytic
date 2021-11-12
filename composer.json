@@ -39,7 +39,8 @@
         "symfony/twig-bundle": "5.3.*",
         "symfony/validator": "5.3.*",
         "symfony/webpack-encore-bundle": "^1.12",
-        "symfony/yaml": "5.3.*"
+        "symfony/yaml": "5.3.*",
+        "fakerphp/faker": "^1.14"
     },
     "config": {
         "optimize-autoloader": true,
@@ -89,7 +90,7 @@
         }
     },
     "require-dev": {
-        "fakerphp/faker": "^1.14",
+        
         "symfony/dotenv": "5.3.*",
         "symfony/maker-bundle": "^1.34",
         "symfony/stopwatch": "^5.3",
