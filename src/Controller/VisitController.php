@@ -7,7 +7,6 @@ use App\Form\ClientType;
 use App\Repository\ClientRepository;
 use App\Repository\UserRepository;
 use App\Repository\VisitRepository;
-use App\Service\ChartService;
 use App\Service\DateTimeService;
 use App\Service\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
@@ -27,7 +26,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class VisitController extends AbstractController
 {
 
-    public function __construct(private ChartService $chartService, private EntityManagerInterface $em)
+    public function __construct(private EntityManagerInterface $em)
     {
     }
 
@@ -64,21 +63,10 @@ class VisitController extends AbstractController
         $clients = $clientRepo->findBy([],['id'=>'DESC'], 5, 0);
 
         // The amount of sale's user visit per day of current week
-        $chart = $this->chartService->buildChart(Chart::TYPE_BAR,
-            $this->chartService::DAYS,
-            'Amount of visits',
-            'rgb(255, 99, 132)',
-            $dateTimeService->numVisitsPerDayOfThisWeek($visitRep));
-        // Chart amount visits by month of current Year
-        $chartMonth = $this->chartService->buildChart(Chart::TYPE_BAR_HORIZONTAL,
-            $this->chartService::MONTHS,
-            'Amount of visits',
-            'rgb(244,164,96)',
-            $dateTimeService->numVisitsPerMonthOfThisYear($visitRep));
+       
 
         return $this->render('supervisor/dashboard.html.twig', [
-            'chart' => $chart,
-            'chartMonth' => $chartMonth,
+            
             'nbDoneVisits' => $nbDoneVisits,
             'totalVisits' => count($visitRep->findAll()),
             'totalClients' =>count($clientRepo->findAll()),

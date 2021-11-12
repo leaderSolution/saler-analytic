@@ -6,7 +6,6 @@ use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\ClientRepository;
 use App\Repository\VisitRepository;
-use App\Service\ChartService;
 use App\Service\DateTimeService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,7 +19,7 @@ class DashboardController extends AbstractController
 {
 
 
-    public function __construct(private DateTimeService $timeService, private EntityManagerInterface $em ,private ChartService $chartService)
+    public function __construct(private DateTimeService $timeService, private EntityManagerInterface $em)
     {
     }
 
@@ -42,25 +41,11 @@ class DashboardController extends AbstractController
         }
 
         $clients = array_unique($temp);
-        // The amount of sale's user visit per day of current week
-        $chart = $this->chartService->buildChart(Chart::TYPE_BAR,
-            $this->chartService::DAYS,
-            'Amount of visits',
-            'rgb(255, 99, 132)',
-            $this->timeService->numSellerVisitsPerDayOfThisWeek($visitRepo, $this->getUser()));
-        // Chart amount visits by month of current Year
-        $chartMonth = $this->chartService->buildChart(Chart::TYPE_BAR_HORIZONTAL,
-            $this->chartService::MONTHS,
-            'Amount of visits',
-            'rgb(244,164,96)',
-            $this->timeService->numSellerVisitsPerMonthOfThisYear($visitRepo, $this->getUser()));
 
 
 
         return $this->render('seller/dashboard.html.twig', [
             'controller_name' => 'DashboardController',
-            'chart' => $chart,
-            'chartMonth' => $chartMonth,
             'nbVisits' => $this->timeService->amountOfNewVisits($visitRepo),
             'visits' => $visits,
             'clients' => $clients,
