@@ -31,7 +31,8 @@
         "dev": "encore dev",
         "watch": "encore dev --watch",
         "build": "encore production --progress",
-        "heroku-postbuild" : "node_modules/.bin/encore production"
+        "heroku-postbuild" : "node_modules/.bin/encore production",
+        "postinstall": "encore production --progress"
     },
     "dependencies": {
         "@algolia/autocomplete-theme-classic": "^1.2.1",
