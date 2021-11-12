@@ -1,0 +1,30 @@
+<div class="card">
+    <div class="card-body" data-reload-content-target="content">
+    <table id="example" class="table" style="width: 100% !important;">
+    <thead>
+    <tr>
+        <th>Designation </th>
+        <th>Region </th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for client in clients %}
+        <tr>
+            <td>{{ client.designation}}</td>
+            <td>{{ client.region }}</td>
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="4">no records found</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+</div>
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+    <script type="text/javascript">
+
+    </script>
+{% endblock %}

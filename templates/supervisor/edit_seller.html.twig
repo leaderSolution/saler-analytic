@@ -1,0 +1,65 @@
+{% extends 'dashboard.html.twig' %}
+
+{% block title %}Edit Seller
+{% endblock %}
+
+{% block content %}
+    <h1>Edit Seller</h1>
+
+    <div class="card">
+        <div class="card-body">
+            {{ form_start(form) }}
+                <div class="row">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col">{{ form_row(form.firstname, {'attr': {'placeholder': 'Jeon'}}) }}</div>
+                            <div class="col">{{ form_row(form.lastname, {'attr': {'placeholder': 'Doe'}}) }}</div>
+
+                        </div>
+
+                        {{ form_row(form.cin) }}
+                        {{ form_row(form.phone) }}
+                    </div>
+                    <div class="col">
+                        {{ form_row(form.email) }}
+                        {{ form_row(form.isActive) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        {{ form_row(form.address.fullAddress) }}
+                        <div class="row">
+                            <div class="col">{{ form_row(form.address.city) }}</div>
+                            <div class="col">{{ form_row(form.address.street) }}</div>
+                            <div class="col">{{ form_row(form.address.zip) }}</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="form-label required" for="nbVisitsDay">Visits per Day</label>
+                        <div class="input-group mb-3">
+                            {{ form_widget(form.nbVisitsDay) }}
+                            <span class="input-group-text" id="basic-addon2">/ Day</span>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <label class="form-label required" for="nbVisitsDay">Objectif Chiffre d'affaires</label>
+                        <div class="input-group mb-3">
+                            {{ form_widget(form.turnoverTarget) }}
+                            <span class="input-group-text" id="basic-addon2">DT/Month</span>
+                        </div>
+                    </div>
+                </div>
+            <div class="card-footer">
+                <button class="btn btn-primary">{{ button_label|default('Save') }}</button>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+
+    </script>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "base.html.twig" %}
+{% block body %}
+	{% if notifications() is not empty %}
+		{% set class = "blink_me" %}
+		{% set nbNotif = '
+				<span class="position-relative translate-middle badge rounded-pill bg-danger">
+					' ~ notifications()|length ~'
+					<span class="visually-hidden">unread messages</span>
+				</span>
+		'%}
+	{% else %}
+		{% set class = "" %}
+		{% set nbNotif = '' %}
+	{% endif %}
+	{% set route = app.request.get('_route') %}
+    {% set adminMenu = [{'text': 'Dashboard', 'icon': 'fs-4 bi-speedometer2','route':'dashboard', 'path': path('admin_dashboard'),},
+                        {'text': 'Commerciaux', 'icon': 'fs-4 bi bi-people','route':'user_index', 'path': path('user_index'),},
+                        {'text': 'Visits', 'icon': 'fs-4 bi bi-card-list','route':'all_visits', 'path': path('all_visits'), },
+						{'text': 'Clients', 'icon': 'fs-4 bi bi-person-lines-fill','route':'all_clients', 'path': path('all_clients'), },
+
+                        ] %}
+    {% set userMenu = [ {'text': 'Dashboard', 'icon': 'fs-4 bi bi-speedometer2','route':'dashboard', 'path': path('dashboard'),},
+                        {'text': 'Agenda', 'icon':'fs-4 bi bi-calendar-event','route':'schedule', 'path': path('schedule')},
+                        {'text': 'Clients <span class="badge bg-primary rounded-pill">'~nbClients()~'</span>' , 'icon':'fs-4 bi bi-people', 'route':'visit_index', 'path':path('seller_clients')},
+                            ]%}
+
+	<header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+		<a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">Seller Analytic</a>
+		<button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="navbar-nav">
+
+		</div>
+		<div class="dropstart">
+			<a class="link-light {{ class }} nav-link px-3 dropdown-toggle" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false" href="#">
+				<i class="fs-4 bi bi-bell"></i>
+				{{ nbNotif |raw }}
+			</a>
+			<ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+				{% if notifications() is not empty %}
+
+					{% for notif in notifications() %}
+						<li><a href="{{ path('visit_edit', {'id': notif.id, 'idC': notif.client.id }) }}" class="dropdown-item" type="button">{{ notif.title }}</a></li>
+					{% endfor %}
+				{% else %}
+					<li><button class="dropdown-item" type="button">None</button></li>
+				{% endif %}
+			</ul>
+		</div>
+	</header>
+	<div class="container-fluid">
+		<div class="row flex-nowrap">
+			<div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0  bg-light">
+				{% if is_granted('ROLE_ADMIN') %}
+                {% include "_left_side_bar.html.twig" with {'menu':  adminMenu } %}   
+					
+                {% else %}
+                    {% include "_left_side_bar.html.twig" with {'menu': userMenu } %}
+				{% endif %}
+
+
+			</div>
+			<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+				{% block content %}{% endblock %}
+			</main>
+		</div>
+
+	</div>
+
+{% endblock %}

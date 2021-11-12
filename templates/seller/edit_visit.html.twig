@@ -1,0 +1,65 @@
+{% extends 'dashboard.html.twig' %}
+
+{% block title %}Edit Visit
+{% endblock %}
+
+{% block content %}
+
+	{% include "top-bar.html.twig" with {'title':'Visit Details','btn':''} %}
+{{ form_start(form) }}
+  	<div class="card">
+		<div class="card-body">
+			<div class="row align-items-center">
+				<div class="col">
+					<label>Title</label>
+					{{ form_widget(form.title) }}
+					<label>Type</label>
+					{{ form_widget(form.types) }}
+					<br>
+					<div class="row">
+						<div class="col">
+							<label>BackgroundColor</label>
+							{{ form_widget(form.backgroundColor) }}
+						</div>
+					</div>
+					<div class="row">
+						<div class="col">
+							<label>Start At</label>
+							{{ form_widget(form.startTime) }}
+						</div>
+						<div class="col">
+							<label>End At</label>
+							{{ form_widget(form.endTime) }}
+						</div>
+					</div>
+					<div class="row">
+						<div class="col">
+							<label>Comment</label>
+							{{ form_widget(form.comment) }}
+						</div>
+						<div class="col">
+							<label>AllDay</label>
+							{{ form_widget(form.allDay) }}
+						</div>
+					</div>
+					<div class="row">
+
+						<div class="col">
+							{{ form_row(form.isDone) }}
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					  <label>Vise-à-vis du client </label>
+					{{ form_row(form.client) }}
+				</div>
+				
+			</div>
+		</div>
+		<div class="card-footer">
+			<a href="{{ path('visit_index') }}" type="button" class="btn btn-secondary">Annuler</a>
+			<button formnovalidate type="submit" class="btn btn-primary">Save changes</button>
+		</div>
+	</div>
+{{ form_end(form) }}
+{% endblock %}

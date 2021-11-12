@@ -1,0 +1,56 @@
+{% extends 'dashboard.html.twig' %}
+
+{% block title %}Client index
+{% endblock %}
+
+{% block content %}
+{% include "top-bar.html.twig" with {'title':'Clients','btn':''} %}
+	<div class="card">
+		<div class="card-body" data-reload-content-target="content">
+			<table id="example" class="table">
+				<thead>
+					<tr>
+						<th>CodeUniq</th>
+						<th>Visit Goal</th>
+						<th>Email</th>
+						<th>actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for client in clients %}
+						<tr>
+							<td>{{ client.codeUniq }}</td>
+							<td>
+								<div class="progress">
+									{% if client.goals is not empty %}
+										{% for goal in client.goals %}
+											{% if goal.period == 1 %}
+												{% set color = 'bg-primary' %}
+											{% elseif goal.period == 2  %}
+												{% set color = 'bg-info' %}
+											{% elseif goal.period == 3  %}
+												{% set color = 'bg-warning' %}
+											{% elseif goal.period == 4  %}
+												{% set color = 'bg-success' %}
+											{% endif %}
+											<div class="progress-bar {{ color }}" role="progressbar" style="width: {{ goal.nbVisits }}%" aria-valuenow="{{ goal.nbVisits }}" aria-valuemin="0" aria-valuemax="200">{{ goal.nbVisits }}</div>
+										{% endfor %}
+									{% endif %}
+								</div>
+							</td>
+							<td>{{ client.email }}</td>
+							<td>
+								<a href="{{ path('client_edit', {'id': client.id}) }}"><i class="fs-5 bi bi-pencil-square"></i></a>
+							</td>
+						</tr>
+					{% else %}
+						<tr>
+							<td colspan="4">no records found</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	
+{% endblock %}

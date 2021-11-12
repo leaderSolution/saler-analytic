@@ -1,0 +1,14 @@
+{% for client in clients %}
+
+	<li class="emailLi list-group-item"
+        data-action="click->autocomplete-transition#fillInput"
+        data-autocomplete-transition-target="email">{{ client.codeUniq }},
+		<span class="text-muted" type="text">
+			{{ client.designation }} - {{ client.region }} - {{ client.taxRegistrationNum }} - {{ client.deadline }}
+		</span>
+	</li>
+
+{% else %}
+	 <li class="list-group-item">Ce client sera ajouté en tant que nouveau prospect</li>
+
+{% endfor %}
