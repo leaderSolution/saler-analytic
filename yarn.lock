@@ -1052,9 +1052,6 @@
     loader-utils "^2.0.0"
     schema-utils "^3.0.0"
 
-"@symfony/ux-chartjs@file:vendor/symfony/ux-chartjs/Resources/assets":
-  version "1.1.0"
-
 "@symfony/webpack-encore@^1.0.0":
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/@symfony/webpack-encore/-/webpack-encore-1.5.0.tgz#4ecdc03dbbf6a151c4a3ce8130416cd012c12245"
