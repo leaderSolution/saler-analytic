@@ -1,2 +1,1 @@
-release: php bin/console doctrine:migrations:migrate && php bin/console cache:clear
-web: heroku-php-apache2 public/
+web: heroku-php-nginx -C nginx_app.conf public/
