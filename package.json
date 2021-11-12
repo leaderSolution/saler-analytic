@@ -27,7 +27,7 @@
         "dev": "encore dev",
         "watch": "encore dev --watch",
         "build": "encore production --progress",
-        "heroku-postbuild": "webpack -p --config ./webpack.config.js",
+        "heroku-postbuild": "webpack -p --config ./webpack.config.js"
     },
     "dependencies": {
         "@algolia/autocomplete-theme-classic": "^1.2.1",
