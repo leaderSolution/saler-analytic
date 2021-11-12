@@ -22,6 +22,10 @@
     },
     "license": "UNLICENSED",
     "private": true,
+    "engines": {
+        "node": "16.x",
+        "yarn": "1.x"
+    },
     "scripts": {
         "dev-server": "encore dev-server",
         "dev": "encore dev",
