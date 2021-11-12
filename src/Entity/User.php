@@ -18,7 +18,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Validator\Constraints\Valid;
 
 /**
- * @ORM\Table(name="app_users")
+ * @ORM\Table(name="`users`")
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */
 #[  UniqueEntity('email'),
