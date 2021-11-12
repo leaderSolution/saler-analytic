@@ -25,7 +25,7 @@ class VisitRepository extends ServiceEntityRepository
     public function findVisitsPerDayOfThisWeek($value): array
     {
         return $this->createQueryBuilder('v')
-            ->andWhere("TO_DATE(v.startTime, 'YYYY-MM-DD') = :val")
+            ->andWhere("DATE_FORMAT(v.startTime, '%Y-%m-%d') = :val")
             ->setParameter('val', $value)
             ->orderBy('v.id', 'ASC')
             //->setMaxResults(10)
@@ -54,7 +54,7 @@ class VisitRepository extends ServiceEntityRepository
     public function findNewVisits($value): array
     {
         return $this->createQueryBuilder('v')
-              ->andWhere("TO_DATE(v.startTime, 'YYYY-MM-DD') = :val")
+              ->andWhere("DATE_FORMAT(v.startTime, '%Y-%m-%d') = :val")
               ->setParameter('val', $value)
               ->orderBy('v.id', 'ASC')
               ->getQuery()
@@ -83,7 +83,7 @@ class VisitRepository extends ServiceEntityRepository
     public function findSellerNewVisits($value, $seller): array
     {
         return $this->createQueryBuilder('v')
-            ->andWhere("TO_DATE(v.startTime, 'YYYY-MM-DD') = :val")
+            ->andWhere("DATE_FORMAT(v.startTime, '%Y-%m-%d') = :val")
             ->andWhere("v.user = :idC")
             ->setParameter('val', $value)
             ->setParameter('idC', $seller)
@@ -99,7 +99,7 @@ class VisitRepository extends ServiceEntityRepository
     public function findSellerComingUpVisits($value, $seller): array
     {
         return $this->createQueryBuilder('v')
-            ->andWhere("TO_DATE(v.startTime, 'YYYY-MM-DD') > :val")
+            ->andWhere("DATE_FORMAT(v.startTime, '%Y-%m-%d') > :val")
             ->andWhere("v.user = :idC")
             ->setParameter('val', $value)
             ->setParameter('idC', $seller)
@@ -138,7 +138,7 @@ class VisitRepository extends ServiceEntityRepository
     public function findSellerVisitsPerDayOfThisWeek(mixed $value, $user)
     {
         return $this->createQueryBuilder('v')
-            ->andWhere("TO_DATE(v.startTime, 'YYYY-MM-DD') = :val")
+            ->andWhere("DATE_FORMAT(v.startTime, '%Y-%m-%d') = :val")
             ->andWhere('v.user = :idS')
             ->setParameter('val', $value)
             ->setParameter('idS', $user)
@@ -165,7 +165,7 @@ class VisitRepository extends ServiceEntityRepository
     public function findSellerVisitsOfTheMonth(mixed $value, $user)
     {
         return $this->createQueryBuilder('v')
-            ->andWhere("TO_DATE(v.startTime, 'YYYY-MM-DD') = :val")
+            ->andWhere("DATE_FORMAT(v.startTime, '%Y-%m-%d') = :val")
             ->andWhere('v.user = :idS')
             ->setParameter('val', $value)
             ->setParameter('idS', $user)
@@ -192,7 +192,7 @@ class VisitRepository extends ServiceEntityRepository
     public function findSellerVisitsByQuarter(mixed $start, mixed $end, $user)
     {
         return $this->createQueryBuilder('v')
-            ->andWhere("TO_DATE(v.startTime, 'YYYY-MM-DD') between :start and :end")
+            ->andWhere("DATE_FORMAT(v.startTime, '%Y-%m-%d') between :start and :end")
             ->andWhere('v.user = :idS')
             ->setParameter('start', $start)
             ->setParameter('end', $end)
