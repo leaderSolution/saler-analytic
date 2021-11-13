@@ -22,9 +22,7 @@ class DateFormatFunction extends FunctionNode
 
     public function getSql(SqlWalker $sqlWalker)
     {
-        return 'TO_DATE (' . $sqlWalker->walkArithmeticExpression($this->dateExpression) . ',' . $sqlWalker->walkStringPrimary($this->formatChar) . ')';
-
-        //return 'DATE_FORMAT (' . $sqlWalker->walkArithmeticExpression($this->dateExpression) . ',' . $sqlWalker->walkStringPrimary($this->formatChar) . ')';
+        return 'DATE_FORMAT (' . $sqlWalker->walkArithmeticExpression($this->dateExpression) . ',' . $sqlWalker->walkStringPrimary($this->formatChar) . ')';
     }
 
     public function parse(Parser $parser)
