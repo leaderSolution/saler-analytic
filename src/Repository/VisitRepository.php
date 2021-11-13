@@ -40,7 +40,7 @@ class VisitRepository extends ServiceEntityRepository
     public function findVisitsPerMonthOfThisYear($value): array
     {
         return $this->createQueryBuilder('v')
-            ->andWhere("DATE_FORMAT(v.startTime, '%Y-%m') = :val")
+            ->andWhere("TO_DATE(v.startTime, 'YYYY-MM') = :val")
             ->setParameter('val', $value)
             ->orderBy('v.id', 'ASC')
             ->getQuery()
@@ -152,7 +152,7 @@ class VisitRepository extends ServiceEntityRepository
     public function findSellerVisitsPerMonthOfThisYear(mixed $value, $user)
     {
         return $this->createQueryBuilder('v')
-            ->andWhere("DATE_FORMAT(v.startTime, '%Y-%m') = :val")
+            ->andWhere("TO_DATE(v.startTime, 'YYYY-MM') = :val")
             ->andWhere('v.user = :idS')
             ->setParameter('val', $value)
             ->setParameter('idS', $user)
