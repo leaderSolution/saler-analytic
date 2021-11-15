@@ -117,4 +117,12 @@ class SellerDashboardController extends AbstractController
         return $this->render('seller/visits.html.twig', ['visits' => $visits ]);
     }
 
+    #[Route('/turnover-month', name: 'seller_turnover_month', methods: ['POST', 'GET'])]
+    public function createTurnoverMonthChart(Request $request, VisitRepository $visitRepo): Response
+    {
+        $parameters = $this->sellerDataManager->sendRequestedParameters($request,'month','m');
+        $data = $this->sellerDataManager->turnoverPerMonthOfYear($parameters['period'], $parameters['year'], $visitRepo, $this->getUser());
+
+        return new JsonResponse($data);
+    }
 }

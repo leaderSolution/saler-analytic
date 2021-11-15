@@ -5,12 +5,6 @@ doctrine:
         # either here or in the DATABASE_URL env var (see .env file)
         #server_version: '13'
         # configure these for your database server
-        driver: 'pdo_mysql'
-        server_version: '5.7'
-        charset: utf8
-        default_table_options:
-            charset: utf8
-            collate: utf8
         url: '%env(resolve:DATABASE_URL)%'       
     orm:
         auto_generate_proxy_classes: true

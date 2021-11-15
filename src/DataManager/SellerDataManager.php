@@ -204,4 +204,55 @@ class SellerDataManager
         return ['period'=>$periodP, 'year'=>$year];
     }
 
+    /**
+     * @param Request          $request
+     * @param ClientRepository $clientRepo
+     * 
+     * @return array
+     */
+    public function turnoverPerMonthOfYear($month, $year,VisitRepository $visitRepo, User $user): array
+    {
+        $visits = [];
+        $result = [];
+        $data = [];
+        $target = [];
+        $turnoverCummul = 0;
+        $monthsOfYear = $this->dateTimeService->monthsOfYear($year);
+        foreach ($monthsOfYear as $key => $value) {
+            $target [] = $user->getTurnoverTarget();
+            $visit= $visitRepo->findSellerVisitsPerMonthOfThisYear($value, $user);
+            if(isset($visit[0])){
+                if($visit[0]->getClient()->getTurnover() != 0){
+                    $data [] = $visit[0]->getClient()->getTurnover();
+                }else {
+                    $data [] = 0;
+                }
+            }
+        }
+
+       /*  foreach (self::MONTHS as $key => $MONTH){
+            $target [] = $user->getTurnoverTarget();
+
+            foreach($visits[$key] as $visit){
+                if(0 != $visit->getClient()->getTurnover()){
+                    $turnoverCummul += $visit->getClient()->getTurnover();
+                }else{
+                    $turnoverCummul = 0;
+                }
+                
+                
+            }
+            dd($visits[$key]);
+            $data [] = $turnoverCummul;
+        } */
+
+        
+        $result['monthlyTurnover'] = $data;
+        $result['targetTurnover'] = $target;
+        $result['month'] = self::MONTHS;
+        
+
+        
+        return $result;
+    }
 }

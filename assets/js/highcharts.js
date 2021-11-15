@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let URI_SELLER_QUARTER = '/seller/visits-quarter'
     let URL_LAST_WEEK = '/last-num-week'
     let URI_SELLER_UNVISITED_CLIENT = '/seller/clients-list';
+    let URI_SELLER_TURNOVER_MONTHLY = '/seller/turnover-month';
     const d = new Date();
     let year = d.getFullYear();
     $('#years').change(e => {
@@ -126,6 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
         postDataChartWeek('container-2',URI_SELLER_WEEK, {'year':e.target.value})
         postDataChartMonth('container-3',URI_SELLER_MONTH, {'year':e.target.value, 'month':''})
         postDataProgressQuarter(URI_SELLER_QUARTER, {'year': e.target.value})
+        postDataCompChartMonth('container-CA', URI_SELLER_TURNOVER_MONTHLY, {'year': e.target.value})
         getTheWeekOfYear(e.target.value)
 
 
@@ -157,6 +159,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     postDataChartWeek('container-2',URI_SELLER_WEEK, {})
     postDataChartMonth('container-3',URI_SELLER_MONTH, {})
+    postDataCompChartMonth('container-CA', URI_SELLER_TURNOVER_MONTHLY, {})
     $('#weekSelect').change(e => {
         e.preventDefault()
        postDataChartWeek('container-2',URI_SELLER_WEEK, {'year':$('#selectedYear').text() , 'week': e.target.value})
@@ -255,6 +258,24 @@ function postDataChartMonth(container,url, data) {
             //setTimeout(function(){location.reload()}, 2000);
         });
 }
+function postDataCompChartMonth(container,url, data) {
+    $.post(url, data)
+        .done(function (response) {
+            console.log(response['monthlyTurnover'])
+           createCompChart(container,
+                'xy',
+                'Chiffre d\affaire VS. Objectif',
+                'CA par mois - '+$('#selectedMYear').text(),
+                
+                response)
+        })
+        .fail(function() {
+            $.alert( "error" );
+        })
+        .always(function() {
+            //setTimeout(function(){location.reload()}, 2000);
+        });
+}
 function createTheChart($container, type, typeX, titleY,title, subTitle, seriesName, data) {
     // Create the chart
     Highcharts.chart($container, {
@@ -311,6 +332,81 @@ function createTheChart($container, type, typeX, titleY,title, subTitle, seriesN
 
 }
 
-
+function createCompChart($container, type,title, subTitle, data){
+    Highcharts.chart($container, {
+        chart: {
+            zoomType: type
+        },
+        title: {
+            text: title
+        },
+        subtitle: {
+            text: subTitle
+        },
+        xAxis: [{
+            categories: data['month'],
+            crosshair: true
+        }],
+        yAxis: [{ // Primary yAxis
+            labels: {
+                format: '{value} DT',
+                style: {
+                    color: Highcharts.getOptions().colors[1]
+                }
+            },
+            title: {
+                text: 'Objectif',
+                style: {
+                    color: Highcharts.getOptions().colors[1]
+                }
+            }
+        }, { // Secondary yAxis
+            title: {
+                text: 'Chiffre d\'affaire',
+                style: {
+                    color: Highcharts.getOptions().colors[0]
+                }
+            },
+            labels: {
+                format: '{value} DT',
+                style: {
+                    color: Highcharts.getOptions().colors[0]
+                }
+            },
+            opposite: true
+        }],
+        tooltip: {
+            shared: true
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'left',
+            x: 120,
+            verticalAlign: 'top',
+            y: 100,
+            floating: true,
+            backgroundColor:
+                Highcharts.defaultOptions.legend.backgroundColor || // theme
+                'rgba(255,255,255,0.25)'
+        },
+        series: [{
+            name: 'Chiffre d\'affaire',
+            type: 'column',
+            yAxis: 1,
+            data: data['monthlyTurnover'],
+            tooltip: {
+                valueSuffix: ' DT'
+            }
+    
+        }, {
+            name: 'Objectif',
+            type: 'spline',
+            data: data['targetTurnover'],
+            tooltip: {
+                valueSuffix: 'DT'
+            }
+        }]
+    });
+}
 
 });
