@@ -219,33 +219,47 @@ class SellerDataManager
         $turnoverCummul = 0;
         $monthsOfYear = $this->dateTimeService->monthsOfYear($year);
         foreach ($monthsOfYear as $key => $value) {
-            $target [] = $user->getTurnoverTarget();
-            $visit= $visitRepo->findSellerVisitsPerMonthOfThisYear($value, $user);
-            if(isset($visit[0])){
+     
+            $visits [] = $visitRepo->findSellerVisitsPerMonthOfThisYear($value, $user);
+           /*  if(isset($visit[0])){
+                $m = sprintf("%02d", ($key+1));
+                //dd($visit[0]->getStartTime()->format('m') === $m);
                 if($visit[0]->getClient()->getTurnover() != 0){
-                    $data [] = $visit[0]->getClient()->getTurnover();
+                    if($visit[0]->getStartTime()->format('Y-m') === $year.'-'.$m ){
+                        $turnoverCummul +=  $visit[0]->getClient()->getTurnover();
+                        $data [] = $turnoverCummul;
+                    }else {
+                        $data [] = $visit[0]->getClient()->getTurnover();
+                    }
+                    
                 }else {
                     $data [] = 0;
                 }
             }
+            $turnoverCummul = 0; */
         }
 
-       /*  foreach (self::MONTHS as $key => $MONTH){
+       
+
+        foreach(self::MONTHS as $key => $MONTH){
             $target [] = $user->getTurnoverTarget();
-
-            foreach($visits[$key] as $visit){
-                if(0 != $visit->getClient()->getTurnover()){
-                    $turnoverCummul += $visit->getClient()->getTurnover();
-                }else{
-                    $turnoverCummul = 0;
-                }
-                
-                
-            }
-            dd($visits[$key]);
-            $data [] = $turnoverCummul;
-        } */
-
+            /* nb monthly visits */
+             $nbVisits = count($visits[$key]);
+             if($nbVisits !== 0 && $nbVisits > 1){
+                 for ($i=0; $i < $nbVisits -1 ; $i++) { 
+                     if ($visits[$key][$i]->getStartTime()->format('Y-m') === $visits[$key][$i+1]->getStartTime()->format('Y-m') ) {
+                        $turnoverCummul +=  $visits[$key][$i]->getClient()->getTurnover() + $visits[$key][$i+1]->getClient()->getTurnover();
+                        
+                     }
+                 }
+                 $data [] = $turnoverCummul;
+             }elseif ($nbVisits === 1) {
+                $data [] =  $visits[$key][0]->getClient()->getTurnover();
+             }else {
+                $data [] = 0;
+             }
+          
+        }
         
         $result['monthlyTurnover'] = $data;
         $result['targetTurnover'] = $target;
