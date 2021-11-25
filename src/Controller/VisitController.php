@@ -157,7 +157,9 @@ class VisitController extends AbstractController
 
         $fileName = $uploader->upload($file);
         $inputFile = $this->getParameter('csvFiles_directory').'/'.$fileName;
+        
         $decoder = new Serializer([new ObjectNormalizer()], [new CsvEncoder()]);
+        
         $rows = $decoder->decode(file_get_contents($inputFile), 'csv');
         foreach ($rows as $key=>$row){
             $seller = $userRepo->findOneBy(['email' => $row['seller']]);
@@ -167,7 +169,7 @@ class VisitController extends AbstractController
             $client->setDesignation($row['designation']);
             $client->setUser($seller);
             $client->setRegion($row['region']);
-            $client->setTurnover((float)$row['turnover']);
+            $client->setTurnover((float)str_replace(' ','',$row['turnover']));
             $this->em->persist($client);
         }
         $this->em->flush();

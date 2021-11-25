@@ -1,13 +1,10 @@
 <!-- Modal -->
-
 {{ form_start(form) }}
 <div class="modal-body">
 	<div class="row">
-		<div
-				class="col">
-			Client
+		<div class="col-sm-6" style="margin-top:2px">
 			<div {{ stimulus_controller({ 'autocomplete': { skipHiddenProperty: true,url: path('schedule', { preview: 1 } ) }, 'autocomplete-transition' : {} }) }} {# data-action="toggle->autocomplete-transition#toggle" 'data-action':"blur->autocomplete-transition#toggle"#}>
-				{{ form_widget(form.client,
+				{{ form_row(form.client,
 					{'attr': {
 						'data-autocomplete-target': "input",
 						'data-autocomplete-transition-target':"pickedEmail",
@@ -18,15 +15,20 @@
 			</div>
 
 		</div>
+		<div class="col-sm-6">
+			{{ form_row(form.types) }}
+		</div>
 
 	</div>
 	<div class="row">
-		<div class="col-sm-8">
-			{{ form_row(form.title) }}
+		<div class="col-sm-6">
+			{{ form_row(form.comment, { 'attr': { 'style' : 'width:100%', 'rows' : '4', 'cols' : '150' }} ) }}
 		</div>
-		<div class="col-sm-4">
-			{{ form_row(form.types) }}
+		
+		<div class="col-sm-6">
+			{{ form_row(form.backgroundColor) }}
 		</div>
+	</div>
 	</div>
 	<div class="row">
 		<div class="col-sm-6">
@@ -36,34 +38,12 @@
 			{{ form_row(form.endTime) }}
 		</div>
 	</div>
-	<div class="row">
-		<div class="col">
-			{{ form_row(form.backgroundColor) }}
-		</div>
-
-	</div>
-
-	{#<div class="row">
-		<div class="col">
-			{{ form_row(form.address.street) }}
-		</div>
-		<div class="col">
-			{{ form_row(form.address.zip) }}
-		</div>
-		<div class="col">
-			{{ form_row(form.address.city) }}
-		</div>
-	</div>#}
+	
 	<br>
 	<div class="row">
 		<div class="form-check form-switch">
 			{{ form_widget(form.allDay) }}
 			<label class="form-check-label" for="{{ form.allDay.vars.id }}"></label>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-6">
-			{{ form_row(form.comment, { 'attr': { 'style' : 'width:100%', 'rows' : '4', 'cols' : '300' }} ) }}
 		</div>
 	</div>
 

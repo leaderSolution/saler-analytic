@@ -4,9 +4,11 @@ namespace App\Controller;
 
 use DateTime;
 use App\Entity\Visit;
+use App\Entity\Leave;
 use App\Form\VisitType;
 use App\Repository\ClientRepository;
 use App\Repository\VisitRepository;
+use App\Repository\LeaveRepository;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -62,9 +64,10 @@ class ScheduleController extends AbstractController
     }
     
     #[Route('/user/schedule', name: 'user_schedule')]
-    public function getUserSchedule(VisitRepository $visitRepository): JsonResponse
+    public function getUserSchedule(): JsonResponse
     {
         $visits = $this->getUser()->getVisits();
+        $leaves = $this->getUser()->getLeaves();
 
         $pickedVisits = [];
 
@@ -83,7 +86,20 @@ class ScheduleController extends AbstractController
 
             ];
         }
+        foreach ($leaves as $leave) {
+            $pickedVisits [] = [
+                'id' => $leave->getId(),
+                'start' => $leave->getStartAt()->format('Y-m-d'),
+                'end' => $leave->getEndAt()->format('Y-m-d'),
+                'title' => $leave->getLabel(),
+                'backgroundColor' => 'red',
+                'borderColor' => 'red',
+                'textColor' => 'white',
+                
 
+
+            ];
+        }
         return  new JsonResponse($pickedVisits);
     }
 
@@ -134,7 +150,27 @@ class ScheduleController extends AbstractController
         return $this->render('seller/visits.html.twig', ['visits' => $visits ]);
     }
 
+    // pick up a leave on the calendar
+    #[Route('/leave', name: 'new_leave', methods:['POST'])]
+    public function pickupLeave(Request $request): JsonResponse
+    {
+        $leave = new Leave();
+        $leave->setUser($this->getUser());
+        $leave->setLabel('Congé');
+        $startAt = $request->get('start');
+        $endAt = $request->get('end');
 
+        if (self::INVALID_DATE !== $startAt) {
+            $leave->setStartAt(new DateTime($startAt));
+        }
+        if (self::INVALID_DATE !== $endAt) {
+            $leave->setEndAt(new DateTime($endAt));
+        }
+        $this->getDoctrine()->getManager()->persist($leave);
+        $this->getDoctrine()->getManager()->flush();
+
+        return  new JsonResponse($leave);
+    }
 
 
 }

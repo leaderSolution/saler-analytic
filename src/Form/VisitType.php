@@ -26,13 +26,7 @@ class VisitType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title', TextType::class, [
-                'label' => 'Title',
-                'attr' => [
-                    'placeholder' => 'Title',
-                ],
-                
-            ])
+            
             ->add('types', ChoiceType::class, [
                 'placeholder' => 'Choose an option',
                 'multiple' => true,

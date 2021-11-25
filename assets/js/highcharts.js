@@ -7,6 +7,7 @@ window.Highcharts = Highcharts;
 function calculateProgressBar(total, target, idP, idTotal, idTarget) {
     let progressBarWidth = total;
     $('#'+idTotal).text(total)
+    
     $('#'+idTarget).text(target)
 
     if(target !== 0 && total < target){
@@ -177,11 +178,13 @@ function postDataProgressQuarter(url, data) {
             for (let i = 0; i < data['targetNbVisits'].length; i++) {
                 console.log(data['sellerNbVisits'][i]['nbVisits'])
                 calculateProgressBar(data['sellerNbVisits'][i]['nbVisits'], data['targetNbVisits'][i],'PQ'+(i+1),'STQ'+(i+1), 'TTQ'+(i+1))
-                // Progress bar of clients: the % of visited clients
-                calculateProgressBar(data['sellerNbVisits'][i]['nbNonVClients'], data.nbSellerClients, 'PC'+(i+1), 'CNVQ'+(i+1), 'TC'+(i+1))
+                // Progress bar of clients: the % of visited clients to visited 
+                calculateProgressBar(data['sellerNbVisits'][i]['nbVisitedClients'], data.nbSellerClients, 'PC'+(i+1), 'CNVQ'+(i+1), 'TC'+(i+1))
+                $('#CNVQ'+(i+1)).text(data.nbSellerClients - data['sellerNbVisits'][i]['nbVisitedClients'])
 
                 $('#cardT'+(i+1)).click(function (){
 
+                    console.log("nb unvisited "+ data['sellerNbVisits'][i]['nonVCQuarter'] )
                     /**/
 
                     $.post(URI_SELLER_UNVISITED_CLIENT, {'data': data['sellerNbVisits'][i]['nonVCQuarter'] })

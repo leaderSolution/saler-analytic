@@ -24,7 +24,7 @@ class VisitFixtures extends Fixture
     
     public function load(ObjectManager $manager)
     {
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             $manager->persist($this->getVisit());
         }
         $manager->flush();

@@ -7,6 +7,7 @@ use App\Entity\Visit;
 use App\Form\VisitType;
 use App\Repository\ClientRepository;
 use App\Repository\VisitRepository;
+use App\Repository\LeaveRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -64,7 +65,7 @@ class SellerDashboardController extends AbstractController
     public function createSelectedMonthChart(Request $request, VisitRepository $visitRepo): Response
     {
         $parameters = $this->sellerDataManager->sendRequestedParameters($request,'month','m');
-        $data = $this->sellerDataManager->visitsOfTheMonth($parameters['period'], $parameters['year'], $visitRepo, $this->getUser());
+        $data = $this->sellerDataManager->visitsOfTheMonth($parameters['period'], $parameters['year'], $visitRepo, $leaveRepo ,$this->getUser());
 
         return new JsonResponse($data);
     }

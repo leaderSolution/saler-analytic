@@ -64,22 +64,22 @@ class ClientRepository extends ServiceEntityRepository
           ;
     }
 
-    // /**
-    //  * @return Client[] Returns an array of Client objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @return Client[] Returns an array of unvisited clients during a quarter
+     */
+    public function findUnVisitedClientsDuringQuarter($code)
     {
+        
         return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
+            ->andWhere('c.codeUniq <> :val')
+            ->andWhere('c.isProspect = 0')
+            ->setParameter('val', $code)
             ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
             ->getQuery()
             ->getResult()
         ;
     }
-    */
+    
 
     /*
     public function findOneBySomeField($value): ?Client

@@ -25,7 +25,7 @@ class CodeUniqToClientTransformer implements DataTransformerInterface
 
     public function reverseTransform($value)
     {
-        $client = $this->clientRepo->findOneBy(['designation' => $value]);
+        $client = $this->clientRepo->findOneBy(['codeUniq' => $value]);
         if (!$client) {
             //throw new TransformationFailedException(sprintf('No client found with email "%s"', $value));
             $client = new Client();

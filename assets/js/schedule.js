@@ -18,16 +18,59 @@ document.addEventListener('DOMContentLoaded', function() {
     var calendar = new Calendar(calendarEl, {
         plugins: [ interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin, momentTimezonePlugin ],
         themeSystem: 'bootstrap',
+        dateClick: function(info) {
+          $.confirm({
+            title: 'Leave !',
+            content: '' +
+            '<form action="" class="formName">' +
+              '<div class="form-group">' +
+                '<label>End at</label>' +
+                '<input type="date" id="endAt" value="'+info.dateStr+'" class="form-control" required />' +
+              '</div>' +
+            '</form>',
+            buttons: {
+                formSubmit: {
+                    text: 'Submit',
+                    btnClass: 'btn-blue',
+                    action: function () {
+                        var startAt = info.dateStr;
+                        var endAt = this.$content.find('#endAt').val();
+                        if(!startAt){
+                            $.alert('provide a valid name');
+                            return false;
+                        }
+                        postData('/leave', {start: startAt, end: endAt})
+                        $.alert('Your leave start at ' + startAt);
+                    }
+                },
+                cancel: function () {
+                    //close
+                },
+            },
+            onContentReady: function () {
+                // bind to events
+                var jc = this;
+                this.$content.find('form').on('submit', function (e) {
+                    // if the user submits the form by pressing enter in the field.
+                    e.preventDefault();
+                    jc.$$formSubmit.trigger('click'); // reference the button and click it
+                });
+            }
+        });
+          // change the day's background color just for fun
+          info.dayEl.style.backgroundColor = 'red';
+      },   
         headerToolbar: {
           left: 'prev,next today',
           center: 'title',
-          right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+          right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek',
         },
         navLinks: true, // can click day/week names to navigate views
         editable: true,
         dayMaxEvents: true, // allow "more" link when too many events
         events: data  ,
       });
+     
       // Edit a visit
       calendar.on('eventChange', (e) => {
         
@@ -37,6 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
         postData(`/edit/${e.event.id}`, { startTime: start.format(), endTime: end.format() })
 
        });
+       
        // Edit a visit's title
        calendar.on('eventClick', (calEvent, jsEvent, view) => {
            let isChecked =''

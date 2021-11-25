@@ -131,10 +131,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $turnoverTarget;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Leave::class, mappedBy="user", orphanRemoval=true)
+     */
+    private $leaves;
+
     public function __construct()
     {
         $this->visits = new ArrayCollection();
         $this->clients = new ArrayCollection();
+        $this->leaves = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -411,6 +417,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTurnoverTarget(?float $turnoverTarget): self
     {
         $this->turnoverTarget = $turnoverTarget;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Leave[]
+     */
+    public function getLeaves(): Collection
+    {
+        return $this->leaves;
+    }
+
+    public function addLeaf(Leave $leaf): self
+    {
+        if (!$this->leaves->contains($leaf)) {
+            $this->leaves[] = $leaf;
+            $leaf->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLeaf(Leave $leaf): self
+    {
+        if ($this->leaves->removeElement($leaf)) {
+            // set the owning side to null (unless already changed)
+            if ($leaf->getUser() === $this) {
+                $leaf->setUser(null);
+            }
+        }
 
         return $this;
     }

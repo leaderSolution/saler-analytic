@@ -5,6 +5,7 @@ namespace App\DataManager;
 use App\Entity\User;
 use App\Repository\ClientRepository;
 use App\Repository\VisitRepository;
+use App\Repository\LeaveRepository;
 use App\Service\DateTimeService;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,7 +15,7 @@ class SellerDataManager
     public const DAYS = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
     public const MONTHS = ['Jan', 'Fev', 'Mar', 'Avr', 'Mai', 'Jun', 'Jui', 'aout','Sep', 'Oct', 'Nov', 'Dec'];
 
-    public function __construct(private DateTimeService $dateTimeService)
+    public function __construct(private DateTimeService $dateTimeService, private LeaveRepository $leaveRepo)
     {
     }
 
@@ -26,10 +27,12 @@ class SellerDataManager
         $total = 0;
         $result = [];
         $visits = [];
+        $nbLeaves = 0;
         $daysOfWeek= $this->dateTimeService->daysOfWeek((int)$week,(int)$year);
 
         foreach ($daysOfWeek as $key => $value) {
             $visits [] = count($visitRepo->findSellerVisitsPerDayOfThisWeek($value, $user));
+            $nbLeaves += count($this->leaveRepo->findSellerLeavesPerDayOfThisWeek($value, $user));
         }
         foreach (self::DAYS as $key => $DAY){
             $total+= $visits[$key];
@@ -38,7 +41,7 @@ class SellerDataManager
         $result ['data'] = $data;
         $result['total'] = $total;
         $result['week'] = $week;
-        $result['nbVisitsTarget'] = 5*$user->getNbVisitsDay();
+        $result['nbVisitsTarget'] = -$nbLeaves + (5*$user->getNbVisitsDay());
 
         return $result;
 
@@ -46,15 +49,17 @@ class SellerDataManager
 
 
     // The amount of visits per month during This year
-    public function visitsPerMonthOfYear($month, $year,VisitRepository $visitRepo, User $user): array
+    public function visitsPerMonthOfYear($month, $year, VisitRepository $visitRepo,User $user): array
     {
         $visits = [];
         $result = [];
         $data = [];
         $total = 0;
+        $nbLeaves = 0;
         $monthsOfYear = $this->dateTimeService->monthsOfYear($year);
         foreach ($monthsOfYear as $key => $value) {
             $visits [] = count($visitRepo->findSellerVisitsPerMonthOfThisYear($value, $user));
+            $nbLeaves += count($this->leaveRepo->findSellerLeavesPerMonthOfThisYear($value, $user));
         }
 
         foreach (self::MONTHS as $key => $MONTH){
@@ -65,12 +70,12 @@ class SellerDataManager
         $result['dataMonth'] = $data;
         $result['totalMonth'] = $total;
         $result['month'] = $month;
-        $result['nbVisitsMonthTarget'] =12*$this->dateTimeService->daysInMonth((int)$month, (int)$year)*$user->getNbVisitsDay();
+        $result['nbVisitsMonthTarget'] = -$nbLeaves + (12*$this->dateTimeService->daysInMonth((int)$month, (int)$year)*$user->getNbVisitsDay());
 
         return $result;
 
     }
-    public function visitsOfTheMonth($month, $year,VisitRepository $visitRepo, User $user): array
+    public function visitsOfTheMonth($month, $year,VisitRepository $visitRepo,User $user): array
     {
         $daysList = [];
         $limitDay = $this->dateTimeService->daysInMonth((int)$month, (int)$year);
@@ -82,9 +87,11 @@ class SellerDataManager
         $result = [];
         $data = [];
         $total = 0;
+        $nbLeaves = 0;
 
         foreach ($daysList as $key => $value) {
             $visits [] = count($visitRepo->findSellerVisitsOfTheMonth($value->format('Y-m-d'), $user));
+            $nbLeaves += count($this->leaveRepo->findSellerLeavesOfTheMonth($value->format('Y-m-d'), $user));
         }
 
 
@@ -96,7 +103,7 @@ class SellerDataManager
         $result['dataMonth'] = $data;
         $result['totalMonth'] = $total;
         $result['month'] = $month;
-        $result['nbVisitsMonthTarget'] = $this->dateTimeService->daysInMonth((int)$month, (int)$year)*$user->getNbVisitsDay();
+        $result['nbVisitsMonthTarget'] = -$nbLeaves + ($this->dateTimeService->daysInMonth((int)$month, (int)$year)*$user->getNbVisitsDay());
 
         return $result;
 
@@ -123,59 +130,71 @@ class SellerDataManager
         $nonVisitedClients = [];
         $sellerAllClients = [];
         $temp = 0;
+        $nbLeaves =0;
+        $unVisitedClients = [];
         $currentDate = new \DateTime('now');
         $year = $request->get('year');
-        $nbSellerClients = count($clientRepo->findBy(['user' =>$user, 'isProspect'=> null,'isProspect'=> false]));
+
+        $nbSellerClients = count($clientRepo->findBy(['user' =>$user,'isProspect'=> false]));
         if(is_null($year)){
             $year = $currentDate->format('Y');
         }
-        $quarterNbDays = $this->dateTimeService->getQuarterNbDays($year);
-        foreach ($quarterNbDays as $nbDay){
-            $targetNbVisits [] = $user->getNbVisitsDay()*$nbDay;
-        }
+        
         $quarterSE = $this->dateTimeService->getQuarterDayStartEnd($year);
         foreach ($quarterSE as $quarter){
             foreach ($quarter as $item){
                 $visits = $visitRepo->findSellerVisitsByQuarter($item['start'], $item['end'], $user);
+                // Get the nb leaves in the quarter
+                $nbLeaves += count($this->leaveRepo->findSellerLeavesByQuarter($item['start'], $item['end'], $user));
+                
                 if(null != $visits){
                     foreach ($visits as $visit){
                         $visitedClients [] = $visit->getClient()->getCodeUniq();
                         $tempVC [] = $visit->getClient()->getDesignation();
-                        $tabNVC [] = $visit->getClient()->getCodeUniq();
+                        $code = $visit->getClient()->getCodeUniq();
+                        $clients = $clientRepo->findUnVisitedClientsDuringQuarter($code);
+                        //dump($clients);
+                        foreach ($clients as $key => $client) {
+                            $tabNVC [] = $client->getCodeUniq();
+                        }
+                        //dump($clientRepo->findUnVisitedClientsDuringQuarter($visit->getClient()->getCodeUniq()));
                     }
+                    
                 }
 
                 $temp += count($visits);
-            }
-            if(null != $user->getClients()){
-                foreach ($user->getClients() as $client) {
-                    if(is_null($client->getIsProspect()) || $client->getIsProspect() == false){
-                        $sellerAllClients [] = $client->getDesignation();
-                        $tabALL [] = $client->getCodeUniq();
+            } 
+                if (! $user->getClients()->isEmpty()) {
+                    foreach ($user->getClients() as $key => $client) {
+                        $sellerAllClients [] = $client->getCodeUniq();
                     }
-
                 }
+                
+                $sellerNbVisits [] = [
+                     "nbVisits"=>$temp,
+                     "nbVisitedClients" => count(array_unique($visitedClients)),
+                     "nonVCQuarter" => array_values(array_diff($sellerAllClients, array_unique($visitedClients))),
+                ];
 
-                $A = array_diff(array_unique($sellerAllClients),array_unique($tempVC));
-                $B = array_diff(array_unique($tabALL),array_unique($tabNVC));
-                $sellerNbVisits [] = ["nbVisits"=>$temp,
-                    "nbNonVClients" => count($A),
-                     "nonVCQuarter" => array_values($B),
-                    ];
-
-            }
-
-            $sellerAllClients = [];
-            $nonVisitedClients = [];
-            $tempVC = [];
-            $temp = 0;
-
+                $sellerAllClients = [];
+                $nonVisitedClients = [];
+                $visitedClients = [];
+                $tempVC = [];
+                $B = [];
+                $tabALL = [];
+                $tabNVC = [];
+                $temp = 0;
         }
 
+        // return the 4 quarters of a given year
+        $quarterNbDays = $this->dateTimeService->getQuarterNbDays($year);
+        foreach ($quarterNbDays as $nbDay){
+            $targetNbVisits [] = -$nbLeaves + ($user->getNbVisitsDay()*$nbDay);
+        }
 
         $result['sellerNbVisits'] = $sellerNbVisits;
         $result['targetNbVisits'] = $targetNbVisits;
-        $result['nbNonVisitedClients'] = count($nonVisitedClients);
+        //$result['nbNonVisitedClients'] = count($nonVisitedClients);
         $result['nbSellerClients'] = $nbSellerClients;
         $result['nonVisitedClients'] = array_unique($nonVisitedClients);
         $result['nbVisitedClients'] = count(array_unique($visitedClients));
@@ -239,20 +258,22 @@ class SellerDataManager
             $turnoverCummul = 0; */
         }
 
-       
-
         foreach(self::MONTHS as $key => $MONTH){
             $target [] = $user->getTurnoverTarget();
             /* nb monthly visits */
              $nbVisits = count($visits[$key]);
              if($nbVisits !== 0 && $nbVisits > 1){
-                 for ($i=0; $i < $nbVisits -1 ; $i++) { 
-                     if ($visits[$key][$i]->getStartTime()->format('Y-m') === $visits[$key][$i+1]->getStartTime()->format('Y-m') ) {
-                        $turnoverCummul +=  $visits[$key][$i]->getClient()->getTurnover() + $visits[$key][$i+1]->getClient()->getTurnover();
-                        
-                     }
-                 }
-                 $data [] = $turnoverCummul;
+                 $turnoverCummul = $visits[$key][0]->getClient()->getTurnover();
+                for ($i=1; $i < $nbVisits-1 ; $i++) { 
+                        if ($visits[$key][0]->getStartTime()->format('Y-m') === $visits[$key][$i]->getStartTime()->format('Y-m') ) {
+                            $turnoverCummul += $visits[$key][$i]->getClient()->getTurnover();
+                            
+                           
+                        }
+                }
+                 
+                 $data [] = $turnoverCummul/1000;
+                 
              }elseif ($nbVisits === 1) {
                 $data [] =  $visits[$key][0]->getClient()->getTurnover();
              }else {
